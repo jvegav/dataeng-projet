@@ -25,7 +25,7 @@ The estimated activity duration and distance are calculated from the recipe calo
 |---|---|---|
 | Itinerary generation volume | `COUNT(*)` from `fact_itinerary` | Measures product usage and adoption. |
 | Average estimated activity duration | `AVG(duration_min)` | Measures the estimated time commitment associated with users' food choices. |
-| Landmark inclusion rate | Percentage of facts with a selected landmark key (excluding the `-1` unknown member) | Measures the use of the heritage-discovery feature. |
+| Landmark inclusion rate | Percentage of facts with a selected landmark key (excluding the `-1` no landmark member) | Measures the use of the heritage-discovery feature. |
 
 These KPIs measure generated itineraries and estimated activity. They do not measure actual calories burned or completed exercise.
 
@@ -48,11 +48,12 @@ The project uses file-based batch ingestion. Raw files are retained unchanged in
 |---|---|---|---|---|
 | Recipes | [Connected Recipe Data Set on GitLab](https://gitlab.com/felix134/connected-recipe-data-set/-/blob/master/data/hummus_data/raw/recipes.zip?ref_type=heads) | Recipe name, ingredients, calories and serving information | Approximately 500,000 recipes. The source contains substantially more than 1,000 rows; the final selected schema contains at least eight useful attributes, including source ID, name, calories, calories per serving, category, ingredients, source file and servings. | One-off download |
 | Protected historical monuments | [French open-data dataset on data.gouv.fr](https://www.data.gouv.fr/datasets/immeubles-proteges-au-titre-des-monuments-historiques-2) | Heritage landmark names, addresses and WGS84 coordinates | The source is a large open-government CSV with many columns and more than 1,000 records. The warehouse retains the fields needed for title, address, commune, INSEE code, latitude, longitude and geometry. | Monthly |
-| Lyon restaurant reviews | Lyon Restaurant Reviews dataset (Kaggle; project copy/source URL: **[to be completed]**) | Restaurant names, cuisines, ratings and coordinates used as route origins | Optional source. The exact file size, column list and access method must be documented when the project copy is added. | One-off download or manual refresh |
+| Lyon restaurant reviews | Lyon Restaurant Reviews dataset (Kaggle; project copy/source URL: **[kaggle]**(https://www.kaggle.com/datasets/launay10christian/lyon-restaurant-reviews-dataset)) | Restaurant names, cuisines, ratings and coordinates used as route origins |  The exact file size, column list and access method must be documented when the project copy is added. | One-off download or manual refresh |
 | Physical activity MET seed | Manually curated CSV based on the [Compendium of Physical Activities](https://pacompendium.com/) | MET values and estimated speeds for walking, running and cycling | Small reference seed; it is not intended to satisfy the two large-dataset requirement. The final seed schema contains activity name, intensity, MET value and speed. | Static |
-| Synthetic users and itineraries | Generated for demonstration purposes | Users and generated itinerary events | **[To be completed: generation method, row count and reproducibility seed]** | Daily batch |
 
 The recipes and monuments datasets are the two primary qualifying datasets for this project. Their exact post-download row counts and the final source-column inventories should be recorded during ingestion validation.
+
+The architecture diagram also shows an offline sample of a few hundred recipes and approximately 30 landmarks. No offline sample data files are currently committed to this repository; the diagram's sample is illustrative rather than a dataset stored at a specific repository path.
 
 ## 3. Tooling and data-engineering lifecycle
 
@@ -64,7 +65,7 @@ The recipes and monuments datasets are the two primary qualifying datasets for t
 | Staging | PostgreSQL staging schemas | Store typed, cleaned tables before warehouse loading. |
 | Production warehouse | PostgreSQL/PostGIS | Build the star schema, surrogate keys, geography columns and analytical measures. |
 | Orchestration | Apache Airflow and Docker Compose | Schedule ingestion, quality gates and production transformations. |
-| Analytics and reporting | SQL and **[to be completed: dashboard/reporting tool]** | Answer business questions and expose KPIs. |
+| Analytics and reporting | SQL and Dashboard | Answer business questions and expose KPIs. |
 | Version control and reproducibility | Git, Docker Compose | Version pipeline code and run the local environment consistently. |
 
 ## 4. Data Architecture
@@ -88,13 +89,13 @@ The recipes and monuments datasets are the two primary qualifying datasets for t
 
 ### Example data-quality checks
 
-The pipeline should fail its quality gate when a required check fails rather than silently producing a success-shaped result. Examples include:
+The pipeline should fail its quality gate when a required check fails and report the failure explicitly. Examples include:
 
 - **Null check:** recipe name, calories per serving, activity name and itinerary date must not be null.
 - **Uniqueness check:** source IDs must be unique within each dimension; `itinerary_key` must be unique in `fact_itinerary`.
 - **Range check:** calories, user weight, MET values and estimated speed must be positive.
 - **Geospatial check:** monument and restaurant coordinates must be valid WGS84 points within the expected Lyon/French-data coverage.
-- **Referential-integrity check:** every fact foreign key must resolve to its corresponding dimension, except the intentional unknown landmark member.
+- **Referential-integrity check:** every fact foreign key must resolve to its corresponding dimension, except the intentional no landmark member.
 
 ## 5. Data Model
 
@@ -128,7 +129,7 @@ The diagram currently labels `dim_recipe` as SCD1, `dim_activity` and `dim_date`
 ## 6. Data Dictionary
 
 
-Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr Monuments Historiques CSV · **[K]** Kaggle Lyon Restaurant Reviews · **[S]** MET seed CSV (Compendium of Physical Activities) · **[G]** generated / synthetic. 
+Sources: **[R]** Connected Recipe Data Set `recipes.zip` (GitLab) · **[M]** data.gouv.fr Monuments Historiques CSV · **[K]** Kaggle Lyon Restaurant Reviews · **[S]** MET seed CSV (Compendium of Physical Activities) · **[G]** generated / synthetic. 
 
 **fact_itinerary**: one row per itinerary generated [G]
 | Column | Type | Description |
@@ -136,10 +137,10 @@ Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr 
 | itinerary_key | INT | PK |
 | recipe_key, activity_key, restaurant_key, user_key, date_key | INT | FKs to dimensions (user = version valid at request time) |
 | landmark_key | INT | FK, `-1` = no landmark |
-| start_point / end_point | GEOGRAPHY(Point,4326) | Restaurant / landmark (restaurant if none) |
+| start_point / end_point | GEOGRAPHY(Point,4326) | start_point is user_location and endpoint is the computed end |
 | kcal_to_burn | INT | kcal of one serving |
 | duration_min | NUMERIC(7,1) | 60 × kcal / (MET × weight) |
-| distance_km | NUMERIC(7,2) | speed × duration |
+| distance_km | NUMERIC(7,2) | `speed_kmh × duration_min / 60` |
 | requested_at | TIMESTAMPTZ | Request timestamp |
 
 **dim_recipe** (SCD1) [R]
@@ -161,10 +162,6 @@ Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr 
 | name | TEXT | `restaurant_name` |
 | cuisine | TEXT | `food_type` |
 | rating | NUMERIC(2,1) | `Rating` (0–5) |
-| review_count | INT | `review_number` |
-| ranking_overall | INT | `rankingoverall` |
-| average_price | TEXT | `average_price` |
-| has_wifi / has_delivery | BOOLEAN | `wifi` / `livraison` |
 | lat, lon | DOUBLE PRECISION | `lat`, `lng` (WGS84) |
 | geom | GEOGRAPHY(Point,4326) | Built from lat/lon |
 
@@ -208,7 +205,8 @@ Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr 
 
 **-- Q1. Usage trends: itineraries per day / week / month**
 
--- Q1a. Per day (includes days with zero itineraries in the active period)
+**-- Q1a. Per day (includes days with zero itineraries in the active period)**
+```
 SELECT d.full_date,
        d.day_name,
        COUNT(f.itinerary_key) AS itineraries
@@ -218,16 +216,20 @@ WHERE d.full_date BETWEEN (SELECT MIN(requested_at)::DATE FROM fact_itinerary)
                       AND (SELECT MAX(requested_at)::DATE FROM fact_itinerary)
 GROUP BY d.full_date, d.day_name
 ORDER BY d.full_date;
+```
 
--- Q1b. Per ISO week
+**-- Q1b. Per ISO week**
+```
 SELECT date_trunc('week', d.full_date)::DATE AS week_start,
        COUNT(*)                              AS itineraries
 FROM fact_itinerary f
 JOIN dim_date d USING (date_key)
 GROUP BY week_start
 ORDER BY week_start;
+```
 
--- Q1c. Per month, with weekday vs weekend split
+**-- Q1c. Per month, with weekday vs weekend split**
+```
 SELECT d.year,
        d.month,
        COUNT(*)                                  AS itineraries,
@@ -237,9 +239,11 @@ FROM fact_itinerary f
 JOIN dim_date d USING (date_key)
 GROUP BY d.year, d.month
 ORDER BY d.year, d.month;
+```
 
 **-- Q2. Activity preferences: which activities are selected most often?**
 
+```
 SELECT a.activity_name,
        COUNT(*)                                              AS itineraries,
        ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1)    AS pct_of_total
@@ -247,10 +251,11 @@ FROM fact_itinerary f
 JOIN dim_activity a USING (activity_key)
 GROUP BY a.activity_name
 ORDER BY itineraries DESC;
-
+```
 
 **-- Q3. Recipe analysis: highest average calorie content per itinerary**
 
+```
 SELECT r.recipe_name,
        r.category,
        COUNT(*)                       AS itineraries,
@@ -261,10 +266,11 @@ GROUP BY r.recipe_key, r.recipe_name, r.category
 HAVING COUNT(*) >= 1
 ORDER BY avg_kcal_per_itinerary DESC
 LIMIT 10;
-
+```
 
 **-- Q4. Activity duration: average estimated time to burn the dish**
 
+```
 SELECT a.activity_name,
        a.met_value,
        COUNT(*)                                                         AS itineraries,
@@ -274,10 +280,11 @@ FROM fact_itinerary f
 JOIN dim_activity a USING (activity_key)
 GROUP BY a.activity_name, a.met_value
 ORDER BY avg_duration_min DESC;
-
+```
 
 **-- Q5. User profiles: duration by weight range (and activity) dim_user is SCD Type 2, so weight_kg is the weight AT REQUEST TIME.**
 
+```
 WITH bucketed AS (
     SELECT f.duration_min,
            a.activity_name,
@@ -300,10 +307,10 @@ SELECT weight_range,
 FROM bucketed
 GROUP BY bucket_order, weight_range, activity_name
 ORDER BY bucket_order, activity_name;
-
+```
 
 **-- Q6. Restaurant popularity: most itineraries generated**
-
+```
 SELECT rs.name,
        rs.cuisine,
        rs.rating,
@@ -314,18 +321,22 @@ JOIN dim_restaurant rs USING (restaurant_key)
 GROUP BY rs.restaurant_key, rs.name, rs.cuisine, rs.rating
 ORDER BY itineraries DESC, rs.rating DESC
 LIMIT 10;
-
+```
 
 **-- Q7. Heritage discovery**
 
--- Q7a. Share of itineraries that include a landmark
+**-- Q7a. Share of itineraries that include a landmark**
+
+```
 SELECT COUNT(*)                                           AS total_itineraries,
        COUNT(*) FILTER (WHERE landmark_key <> -1)         AS with_landmark,
        ROUND(100.0 * COUNT(*) FILTER (WHERE landmark_key <> -1)
              / NULLIF(COUNT(*), 0), 1)                    AS landmark_inclusion_rate_pct
 FROM fact_itinerary;
+```
+**-- Q7b. Most selected landmarks**
+```
 
--- Q7b. Most selected landmarks**
 SELECT l.name,
        l.commune,
        COUNT(*) AS itineraries
@@ -335,10 +346,11 @@ WHERE l.landmark_key <> -1
 GROUP BY l.landmark_key, l.name, l.commune
 ORDER BY itineraries DESC
 LIMIT 10;
-
+```
 
 **-- Q8. Distance analysis: estimated distance by activity and recipe category**
 
+```
 SELECT a.activity_name,
        r.category,
        COUNT(*)                        AS itineraries,
@@ -350,11 +362,11 @@ JOIN dim_activity a USING (activity_key)
 JOIN dim_recipe   r USING (recipe_key)
 GROUP BY a.activity_name, r.category
 ORDER BY a.activity_name, avg_distance_km DESC;
-
+```
 
 ## 8. Expected Product View
 
-[](final_demo.jpeg)
+![Expected product view](final_demo.jpeg)
 
 ## 9. Limitations and assumptions
 
@@ -373,8 +385,8 @@ ORDER BY a.activity_name, avg_distance_km DESC;
 
 ### AI disclosure
 
-Here are the links to the different AI chats used during this project: 
- - https://claude.ai/share/d6ea6715-199d-4653-8246-9acb3b7d6132
+Here is the link to the AI chat used during this project:
+- https://claude.ai/share/d6ea6715-199d-4653-8246-9acb3b7d6132
 
 
 ## 11. Group Contribution
