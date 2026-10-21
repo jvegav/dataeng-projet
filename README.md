@@ -48,12 +48,12 @@ The project uses file-based batch ingestion. Raw files are retained unchanged in
 |---|---|---|---|---|
 | Recipes | [Connected Recipe Data Set on GitLab](https://gitlab.com/felix134/connected-recipe-data-set/-/blob/master/data/hummus_data/raw/recipes.zip?ref_type=heads) | Recipe name, ingredients, calories and serving information | Approximately 500,000 recipes. The source contains substantially more than 1,000 rows; the final selected schema contains at least eight useful attributes, including source ID, name, calories, calories per serving, category, ingredients, source file and servings. | One-off download |
 | Protected historical monuments | [French open-data dataset on data.gouv.fr](https://www.data.gouv.fr/datasets/immeubles-proteges-au-titre-des-monuments-historiques-2) | Heritage landmark names, addresses and WGS84 coordinates | The source is a large open-government CSV with many columns and more than 1,000 records. The warehouse retains the fields needed for title, address, commune, INSEE code, latitude, longitude and geometry. | Monthly |
-| Lyon restaurant reviews | Lyon Restaurant Reviews dataset (Kaggle; project copy/source URL: **[kaggle]**(https://www.kaggle.com/datasets/launay10christian/lyon-restaurant-reviews-dataset)) | Restaurant names, cuisines, ratings and coordinates used as route origins |  The exact file size, column list and access method must be documented when the project copy is added. | One-off download or manual refresh |
+| Lyon restaurant reviews | Lyon Restaurant Reviews dataset (Kaggle; project copy/source URL: **[kaggle]**(https://www.kaggle.com/datasets/launay10christian/lyon-restaurant-reviews-dataset)) | Restaurant names, cuisines, ratings and coordinates used as route origins | Columns: `restaurant_name`, `review_number`, `food_type`, `rankingoverall`, `Rating`, `wifi`, `livraison`, `average_price`, `lat`, `lng`. The warehouse keeps name, cuisine, rating and coordinates. A copy is stored in the repository because Kaggle requires an API key. | One-off download or manual refresh |
 | Physical activity MET seed | Manually curated CSV based on the [Compendium of Physical Activities](https://pacompendium.com/) | MET values and estimated speeds for walking, running and cycling | Small reference seed; it is not intended to satisfy the two large-dataset requirement. The final seed schema contains activity name, intensity, MET value and speed. | Static |
 
 The recipes and monuments datasets are the two primary qualifying datasets for this project. Their exact post-download row counts and the final source-column inventories should be recorded during ingestion validation.
 
-The architecture diagram also shows an offline sample of a few hundred recipes and approximately 30 landmarks. No offline sample data files are currently committed to this repository; the diagram's sample is illustrative rather than a dataset stored at a specific repository path.
+The architecture diagram also shows an offline sample of a few hundred recipes and approximately 30 landmarks for reproducibility. The repository currently contains a small illustrative sample (`sql/02_sample_data.sql`) used to test the schema and demo queries.
 
 ## 3. Tooling and data-engineering lifecycle
 
@@ -94,8 +94,8 @@ The pipeline should fail its quality gate when a required check fails and report
 - **Null check:** recipe name, calories per serving, activity name and itinerary date must not be null.
 - **Uniqueness check:** source IDs must be unique within each dimension; `itinerary_key` must be unique in `fact_itinerary`.
 - **Range check:** calories, user weight, MET values and estimated speed must be positive.
-- **Geospatial check:** monument and restaurant coordinates must be valid WGS84 points within the expected Lyon/French-data coverage.
-- **Referential-integrity check:** every fact foreign key must resolve to its corresponding dimension, except the intentional no landmark member.
+- **Geospatial check:** monument and restaurant coordinates must be valid WGS84 points inside the Lyon bounding box (lat 45.55–45.95, lon 4.65–5.15); monuments outside Lyon are filtered out in staging.
+- **Referential-integrity check:** every fact foreign key must resolve to its corresponding dimension; itineraries without a landmark point to the `-1` "No landmark" row.
 
 ## 5. Data Model
 
@@ -120,11 +120,10 @@ The grain of `fact_itinerary` is **one row per itinerary generated for one user,
 | `dim_recipe` | **Type 1** | Recipe corrections and normalisation should update the current descriptive value. Historical recipe versions are not a business requirement for this demonstration. |
 | `dim_activity` | **Static** | Walking, running and cycling are a small controlled reference list whose MET values and speeds are maintained as a curated seed. |
 | `dim_date` | **Static** | Calendar attributes are deterministic and do not change. |
-| `dim_restaurant` | **Type 1** *(proposed)* | The current restaurant name, cuisine, rating and coordinates are sufficient for the demonstration; historical restaurant changes are not currently required. |
-| `dim_landmark` | **Type 1** *(proposed)* | The current official title, address and coordinates are used. A historical preservation-status requirement has not been specified. |
+| `dim_restaurant` | **Type 1** | The current restaurant name, cuisine, rating and coordinates are sufficient for the demonstration; historical restaurant changes are not currently required. |
+| `dim_landmark` | **Type 1** | The current official title, address and coordinates are used. A historical preservation-status requirement has not been specified. |
 | `dim_user` | **Type 2** | Weight can change over time and affects calorie-burn estimates. Effective timestamps and `is_current` preserve the user context used by each itinerary. |
 
-The diagram currently labels `dim_recipe` as SCD1, `dim_activity` and `dim_date` as static, and `dim_user` as SCD2. Restaurant and landmark SCD choices are documented here as proposed choices because no historical requirements were provided.
 
 ## 6. Data Dictionary
 
@@ -137,7 +136,7 @@ Sources: **[R]** Connected Recipe Data Set `recipes.zip` (GitLab) · **[M]** dat
 | itinerary_key | INT | PK |
 | recipe_key, activity_key, restaurant_key, user_key, date_key | INT | FKs to dimensions (user = version valid at request time) |
 | landmark_key | INT | FK, `-1` = no landmark |
-| start_point / end_point | GEOGRAPHY(Point,4326) | start_point is user_location and endpoint is the computed end |
+| start_point / end_point | GEOGRAPHY(Point,4326) | Restaurant location / landmark location (restaurant again if no landmark) |
 | kcal_to_burn | INT | kcal of one serving |
 | duration_min | NUMERIC(7,1) | 60 × kcal / (MET × weight) |
 | distance_km | NUMERIC(7,2) | `speed_kmh × duration_min / 60` |
@@ -201,8 +200,6 @@ Sources: **[R]** Connected Recipe Data Set `recipes.zip` (GitLab) · **[M]** dat
 | is_weekend | BOOLEAN | Sat/Sun |
 
 ## 7. Demo Queries
-
-
 **-- Q1. Usage trends: itineraries per day / week / month**
 
 **-- Q1a. Per day (includes days with zero itineraries in the active period)**
@@ -370,7 +367,9 @@ ORDER BY a.activity_name, avg_distance_km DESC;
 
 ## 9. Limitations and assumptions
 
-- Distances are currently estimated as straight-line or chained distances, not road-network routes.
+- Distances are straight-line (PostGIS `ST_Distance`), not road-network routes. Chained landmarks are future work; long targets require several round trips.
+- Each itinerary assumes **one serving** of the recipe (`kcal_to_burn = kcal_per_serving`).
+- An itinerary without a landmark is a loop starting and ending at the restaurant.
 - Calorie expenditure is estimated from MET, user weight and duration; it is not a physiological measurement.
 - The project uses synthetic users and itinerary events for demonstration.
 
