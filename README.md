@@ -127,9 +127,6 @@ The diagram currently labels `dim_recipe` as SCD1, `dim_activity` and `dim_date`
 
 ## 6. Data Dictionary
 
-# Data Dictionary
-
-# Data Dictionary
 
 Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr Monuments Historiques CSV · **[K]** Kaggle Lyon Restaurant Reviews · **[S]** MET seed CSV (Compendium of Physical Activities) · **[G]** generated / synthetic. 
 
