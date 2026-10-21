@@ -137,7 +137,7 @@ The following PostgreSQL queries answer the business questions in the brief. The
 
 ## 8. Expected Product View
 
-
+[](final_demo.jpeg)
 
 ## 9. Limitations and assumptions
 
@@ -163,6 +163,6 @@ Here are the links to the different AI chats used during this project:
 
 ## 11. Group Contribution
 
-- Kawthar AGUIR
-- VASQUEZ Juan Martin
-- VEGA Josue
+- Kawthar AGUIR 36%
+- VASQUEZ Juan Martin 31%
+- VEGA Josue 33%
