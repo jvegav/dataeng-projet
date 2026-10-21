@@ -129,7 +129,9 @@ The diagram currently labels `dim_recipe` as SCD1, `dim_activity` and `dim_date`
 
 # Data Dictionary
 
-Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr Monuments Historiques CSV · **[K]** Kaggle Lyon Restaurant Reviews · **[S]** MET seed CSV (Compendium of Physical Activities) · **[G]** generated / synthetic.
+# Data Dictionary
+
+Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr Monuments Historiques CSV · **[K]** Kaggle Lyon Restaurant Reviews · **[S]** MET seed CSV (Compendium of Physical Activities) · **[G]** generated / synthetic. 
 
 **fact_itinerary**: one row per itinerary generated [G]
 | Column | Type | Description |
@@ -143,7 +145,7 @@ Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr 
 | distance_km | NUMERIC(7,2) | speed × duration |
 | requested_at | TIMESTAMPTZ | Request timestamp |
 
-**dim_recipe** [R]
+**dim_recipe** (SCD1) [R]
 | Column | Type | Description |
 |---|---|---|
 | source_id | TEXT | `recipe_id` |
@@ -155,7 +157,7 @@ Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr 
 | ingredients | TEXT | `ingredient_food_kg_names` |
 | source_file | TEXT | Lineage (file of origin) |
 
-**dim_restaurant** [K]
+**dim_restaurant** (SCD1) [K]
 | Column | Type | Description |
 |---|---|---|
 | source_id | TEXT | md5(name, lat, lng) |
@@ -169,7 +171,7 @@ Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr 
 | lat, lon | DOUBLE PRECISION | `lat`, `lng` (WGS84) |
 | geom | GEOGRAPHY(Point,4326) | Built from lat/lon |
 
-**dim_landmark** [M]
+**dim_landmark** (SCD1) [M]
 | Column | Type | Description |
 |---|---|---|
 | source_id | TEXT | Mérimée reference |
@@ -179,7 +181,7 @@ Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr 
 | lat, lon | DOUBLE PRECISION | WGS84 coordinates |
 | geom | GEOGRAPHY(Point,4326) | Built from lat/lon |
 
-**dim_activity** [S]
+**dim_activity** (Static) [S]
 | Column | Type | Description |
 |---|---|---|
 | activity_name | TEXT | walking, running, cycling |
@@ -187,7 +189,7 @@ Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr 
 | met_value | NUMERIC(4,2) | Metabolic equivalent |
 | speed_kmh | NUMERIC(5,2) | Assumed average speed |
 
-**dim_user** [G]
+**dim_user** (SCD2) [G]
 | Column | Type | Description |
 |---|---|---|
 | user_id | TEXT | Business key |
@@ -195,7 +197,7 @@ Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr 
 | valid_from / valid_to | TIMESTAMPTZ | Validity period (`9999-12-31` if current) |
 | is_current | BOOLEAN | Latest version |
 
-**dim_date** [G]
+**dim_date** (Static) [G]
 | Column | Type | Description |
 |---|---|---|
 | date_key | INT | YYYYMMDD |
@@ -206,10 +208,10 @@ Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr 
 
 ## 7. Demo Queries
 
-The following PostgreSQL queries answer the business questions in the brief. They assume the column names in the data dictionary and a populated unknown landmark member.
 
-**Usage trends:**
+**-- Q1. Usage trends: itineraries per day / week / month**
 
+-- Q1a. Per day (includes days with zero itineraries in the active period)
 SELECT d.full_date,
        d.day_name,
        COUNT(f.itinerary_key) AS itineraries
@@ -220,7 +222,26 @@ WHERE d.full_date BETWEEN (SELECT MIN(requested_at)::DATE FROM fact_itinerary)
 GROUP BY d.full_date, d.day_name
 ORDER BY d.full_date;
 
-**Activity preferences:**
+-- Q1b. Per ISO week
+SELECT date_trunc('week', d.full_date)::DATE AS week_start,
+       COUNT(*)                              AS itineraries
+FROM fact_itinerary f
+JOIN dim_date d USING (date_key)
+GROUP BY week_start
+ORDER BY week_start;
+
+-- Q1c. Per month, with weekday vs weekend split
+SELECT d.year,
+       d.month,
+       COUNT(*)                                  AS itineraries,
+       COUNT(*) FILTER (WHERE d.is_weekend)      AS weekend_itineraries,
+       COUNT(*) FILTER (WHERE NOT d.is_weekend)  AS weekday_itineraries
+FROM fact_itinerary f
+JOIN dim_date d USING (date_key)
+GROUP BY d.year, d.month
+ORDER BY d.year, d.month;
+
+**-- Q2. Activity preferences: which activities are selected most often?**
 
 SELECT a.activity_name,
        COUNT(*)                                              AS itineraries,
@@ -230,7 +251,8 @@ JOIN dim_activity a USING (activity_key)
 GROUP BY a.activity_name
 ORDER BY itineraries DESC;
 
-**Recipe analysis:**
+
+**-- Q3. Recipe analysis: highest average calorie content per itinerary**
 
 SELECT r.recipe_name,
        r.category,
@@ -243,7 +265,8 @@ HAVING COUNT(*) >= 1
 ORDER BY avg_kcal_per_itinerary DESC
 LIMIT 10;
 
-**Activity duration:**
+
+**-- Q4. Activity duration: average estimated time to burn the dish**
 
 SELECT a.activity_name,
        a.met_value,
@@ -255,7 +278,8 @@ JOIN dim_activity a USING (activity_key)
 GROUP BY a.activity_name, a.met_value
 ORDER BY avg_duration_min DESC;
 
-**User profiles:**
+
+**-- Q5. User profiles: duration by weight range (and activity) dim_user is SCD Type 2, so weight_kg is the weight AT REQUEST TIME.**
 
 WITH bucketed AS (
     SELECT f.duration_min,
@@ -280,7 +304,8 @@ FROM bucketed
 GROUP BY bucket_order, weight_range, activity_name
 ORDER BY bucket_order, activity_name;
 
-**Restaurant popularity:**
+
+**-- Q6. Restaurant popularity: most itineraries generated**
 
 SELECT rs.name,
        rs.cuisine,
@@ -293,16 +318,17 @@ GROUP BY rs.restaurant_key, rs.name, rs.cuisine, rs.rating
 ORDER BY itineraries DESC, rs.rating DESC
 LIMIT 10;
 
-**Heritage discovery:**
 
+**-- Q7. Heritage discovery**
+
+-- Q7a. Share of itineraries that include a landmark
 SELECT COUNT(*)                                           AS total_itineraries,
        COUNT(*) FILTER (WHERE landmark_key <> -1)         AS with_landmark,
        ROUND(100.0 * COUNT(*) FILTER (WHERE landmark_key <> -1)
              / NULLIF(COUNT(*), 0), 1)                    AS landmark_inclusion_rate_pct
 FROM fact_itinerary;
- 
-Most selected landmarks
 
+-- Q7b. Most selected landmarks**
 SELECT l.name,
        l.commune,
        COUNT(*) AS itineraries
@@ -313,7 +339,8 @@ GROUP BY l.landmark_key, l.name, l.commune
 ORDER BY itineraries DESC
 LIMIT 10;
 
-**Distance analysis:**
+
+**-- Q8. Distance analysis: estimated distance by activity and recipe category**
 
 SELECT a.activity_name,
        r.category,
