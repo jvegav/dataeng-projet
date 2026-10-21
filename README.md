@@ -48,7 +48,7 @@ The project uses file-based batch ingestion. Raw files are retained unchanged in
 |---|---|---|---|---|
 | Recipes | [Connected Recipe Data Set on GitLab](https://gitlab.com/felix134/connected-recipe-data-set/-/blob/master/data/hummus_data/raw/recipes.zip?ref_type=heads) | Recipe name, ingredients, calories and serving information | Approximately 500,000 recipes. The source contains substantially more than 1,000 rows; the final selected schema contains at least eight useful attributes, including source ID, name, calories, calories per serving, category, ingredients, source file and servings. | One-off download |
 | Protected historical monuments | [French open-data dataset on data.gouv.fr](https://www.data.gouv.fr/datasets/immeubles-proteges-au-titre-des-monuments-historiques-2) | Heritage landmark names, addresses and WGS84 coordinates | The source is a large open-government CSV with many columns and more than 1,000 records. The warehouse retains the fields needed for title, address, commune, INSEE code, latitude, longitude and geometry. | Monthly |
-| Lyon restaurant reviews | Lyon Restaurant Reviews dataset (Kaggle; project copy/source URL: **[to be completed]**) | Optional restaurant names, cuisines, ratings and coordinates used as route origins | Optional source. The exact file size, column list and access method must be documented when the project copy is added. | One-off download or manual refresh |
+| Lyon restaurant reviews | Lyon Restaurant Reviews dataset (Kaggle; project copy/source URL: **[to be completed]**) | Restaurant names, cuisines, ratings and coordinates used as route origins | Optional source. The exact file size, column list and access method must be documented when the project copy is added. | One-off download or manual refresh |
 | Physical activity MET seed | Manually curated CSV based on the [Compendium of Physical Activities](https://pacompendium.com/) | MET values and estimated speeds for walking, running and cycling | Small reference seed; it is not intended to satisfy the two large-dataset requirement. The final seed schema contains activity name, intensity, MET value and speed. | Static |
 | Synthetic users and itineraries | Generated for demonstration purposes | Users and generated itinerary events | **[To be completed: generation method, row count and reproducibility seed]** | Daily batch |
 
@@ -81,7 +81,7 @@ The recipes and monuments datasets are the two primary qualifying datasets for t
 
 - **Recipes:** file-based batch download of `recipes.zip`; one-off load.
 - **Protected monuments:** direct CSV download; monthly refresh.
-- **Restaurants:** optional file-based load; one-off or manual refresh.
+- **Restaurants:** file-based load; one-off or manual refresh.
 - **MET reference data:** manually maintained seed CSV; static.
 - **Generated itineraries:** daily batch.
 - **Landing policy:** original files are preserved unchanged, with ingestion metadata and duplicate-load protection.
@@ -360,7 +360,6 @@ ORDER BY a.activity_name, avg_distance_km DESC;
 
 - Distances are currently estimated as straight-line or chained distances, not road-network routes.
 - Calorie expenditure is estimated from MET, user weight and duration; it is not a physiological measurement.
-- Some restaurant data is optional and requires a documented local copy or authenticated Kaggle access.
 - The project uses synthetic users and itinerary events for demonstration.
 
 ## 10. References and AI disclosure
@@ -380,6 +379,6 @@ Here are the links to the different AI chats used during this project:
 
 ## 11. Group Contribution
 
-- Kawthar AGUIR 36%
+- AGUIR Kawthar 33%
 - VASQUEZ Juan Martin 31%
-- VEGA Josue 33%
+- VEGA Josue 36%
