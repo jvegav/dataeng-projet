@@ -127,12 +127,205 @@ The diagram currently labels `dim_recipe` as SCD1, `dim_activity` and `dim_date`
 
 ## 6. Data Dictionary
 
+# Data Dictionary
 
+Sources: **[R]** Food.com/HUMMUS `recipes.zip` (GitLab) · **[M]** data.gouv.fr Monuments Historiques CSV · **[K]** Kaggle Lyon Restaurant Reviews · **[S]** MET seed CSV (Compendium of Physical Activities) · **[G]** generated / synthetic.
+
+**fact_itinerary**: one row per itinerary generated [G]
+| Column | Type | Description |
+|---|---|---|
+| itinerary_key | INT | PK |
+| recipe_key, activity_key, restaurant_key, user_key, date_key | INT | FKs to dimensions (user = version valid at request time) |
+| landmark_key | INT | FK, `-1` = no landmark |
+| start_point / end_point | GEOGRAPHY(Point,4326) | Restaurant / landmark (restaurant if none) |
+| kcal_to_burn | INT | kcal of one serving |
+| duration_min | NUMERIC(7,1) | 60 × kcal / (MET × weight) |
+| distance_km | NUMERIC(7,2) | speed × duration |
+| requested_at | TIMESTAMPTZ | Request timestamp |
+
+**dim_recipe** [R]
+| Column | Type | Description |
+|---|---|---|
+| source_id | TEXT | `recipe_id` |
+| recipe_name | TEXT | `title` |
+| kcal_per_serving | INT | `calories [cal]` (kcal) |
+| servings | INT | `servingsPerRecipe` |
+| total_kcal | INT | kcal_per_serving × servings |
+| category | TEXT | Derived from `tags` (main, dessert, …) |
+| ingredients | TEXT | `ingredient_food_kg_names` |
+| source_file | TEXT | Lineage (file of origin) |
+
+**dim_restaurant** [K]
+| Column | Type | Description |
+|---|---|---|
+| source_id | TEXT | md5(name, lat, lng) |
+| name | TEXT | `restaurant_name` |
+| cuisine | TEXT | `food_type` |
+| rating | NUMERIC(2,1) | `Rating` (0–5) |
+| review_count | INT | `review_number` |
+| ranking_overall | INT | `rankingoverall` |
+| average_price | TEXT | `average_price` |
+| has_wifi / has_delivery | BOOLEAN | `wifi` / `livraison` |
+| lat, lon | DOUBLE PRECISION | `lat`, `lng` (WGS84) |
+| geom | GEOGRAPHY(Point,4326) | Built from lat/lon |
+
+**dim_landmark** [M]
+| Column | Type | Description |
+|---|---|---|
+| source_id | TEXT | Mérimée reference |
+| name | TEXT | Monument title |
+| address, commune | TEXT | Location |
+| insee_code | CHAR(5) | Lyon: 69381–69389 |
+| lat, lon | DOUBLE PRECISION | WGS84 coordinates |
+| geom | GEOGRAPHY(Point,4326) | Built from lat/lon |
+
+**dim_activity** [S]
+| Column | Type | Description |
+|---|---|---|
+| activity_name | TEXT | walking, running, cycling |
+| intensity | INT | 1 low – 3 vigorous |
+| met_value | NUMERIC(4,2) | Metabolic equivalent |
+| speed_kmh | NUMERIC(5,2) | Assumed average speed |
+
+**dim_user** [G]
+| Column | Type | Description |
+|---|---|---|
+| user_id | TEXT | Business key |
+| weight_kg | NUMERIC(5,1) | Weight during validity period |
+| valid_from / valid_to | TIMESTAMPTZ | Validity period (`9999-12-31` if current) |
+| is_current | BOOLEAN | Latest version |
+
+**dim_date** [G]
+| Column | Type | Description |
+|---|---|---|
+| date_key | INT | YYYYMMDD |
+| full_date | DATE | Calendar date |
+| day_of_week / day_name | INT / TEXT | ISO weekday (1 = Mon) / name |
+| month, year | INT | Calendar parts |
+| is_weekend | BOOLEAN | Sat/Sun |
 
 ## 7. Demo Queries
 
 The following PostgreSQL queries answer the business questions in the brief. They assume the column names in the data dictionary and a populated unknown landmark member.
 
+**Usage trends:**
+
+SELECT d.full_date,
+       d.day_name,
+       COUNT(f.itinerary_key) AS itineraries
+FROM dim_date d
+LEFT JOIN fact_itinerary f USING (date_key)
+WHERE d.full_date BETWEEN (SELECT MIN(requested_at)::DATE FROM fact_itinerary)
+                      AND (SELECT MAX(requested_at)::DATE FROM fact_itinerary)
+GROUP BY d.full_date, d.day_name
+ORDER BY d.full_date;
+
+**Activity preferences:**
+
+SELECT a.activity_name,
+       COUNT(*)                                              AS itineraries,
+       ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1)    AS pct_of_total
+FROM fact_itinerary f
+JOIN dim_activity a USING (activity_key)
+GROUP BY a.activity_name
+ORDER BY itineraries DESC;
+
+**Recipe analysis:**
+
+SELECT r.recipe_name,
+       r.category,
+       COUNT(*)                       AS itineraries,
+       ROUND(AVG(f.kcal_to_burn), 0)  AS avg_kcal_per_itinerary
+FROM fact_itinerary f
+JOIN dim_recipe r USING (recipe_key)
+GROUP BY r.recipe_key, r.recipe_name, r.category
+HAVING COUNT(*) >= 1
+ORDER BY avg_kcal_per_itinerary DESC
+LIMIT 10;
+
+**Activity duration:**
+
+SELECT a.activity_name,
+       a.met_value,
+       COUNT(*)                                                         AS itineraries,
+       ROUND(AVG(f.duration_min), 1)                                    AS avg_duration_min,
+       ROUND(percentile_cont(0.5) WITHIN GROUP (ORDER BY f.duration_min)::NUMERIC, 1) AS median_duration_min
+FROM fact_itinerary f
+JOIN dim_activity a USING (activity_key)
+GROUP BY a.activity_name, a.met_value
+ORDER BY avg_duration_min DESC;
+
+**User profiles:**
+
+WITH bucketed AS (
+    SELECT f.duration_min,
+           a.activity_name,
+           CASE WHEN u.weight_kg < 60 THEN 1
+                WHEN u.weight_kg < 75 THEN 2
+                WHEN u.weight_kg < 90 THEN 3
+                ELSE 4 END                                AS bucket_order,
+           CASE WHEN u.weight_kg < 60 THEN '< 60 kg'
+                WHEN u.weight_kg < 75 THEN '60-75 kg'
+                WHEN u.weight_kg < 90 THEN '75-90 kg'
+                ELSE '90+ kg' END                         AS weight_range
+    FROM fact_itinerary f
+    JOIN dim_user     u USING (user_key)
+    JOIN dim_activity a USING (activity_key)
+)
+SELECT weight_range,
+       activity_name,
+       COUNT(*)                       AS itineraries,
+       ROUND(AVG(duration_min), 1)    AS avg_duration_min
+FROM bucketed
+GROUP BY bucket_order, weight_range, activity_name
+ORDER BY bucket_order, activity_name;
+
+**Restaurant popularity:**
+
+SELECT rs.name,
+       rs.cuisine,
+       rs.rating,
+       COUNT(*)                         AS itineraries,
+       ROUND(AVG(f.kcal_to_burn), 0)    AS avg_kcal_per_itinerary
+FROM fact_itinerary f
+JOIN dim_restaurant rs USING (restaurant_key)
+GROUP BY rs.restaurant_key, rs.name, rs.cuisine, rs.rating
+ORDER BY itineraries DESC, rs.rating DESC
+LIMIT 10;
+
+**Heritage discovery:**
+
+SELECT COUNT(*)                                           AS total_itineraries,
+       COUNT(*) FILTER (WHERE landmark_key <> -1)         AS with_landmark,
+       ROUND(100.0 * COUNT(*) FILTER (WHERE landmark_key <> -1)
+             / NULLIF(COUNT(*), 0), 1)                    AS landmark_inclusion_rate_pct
+FROM fact_itinerary;
+ 
+Most selected landmarks
+
+SELECT l.name,
+       l.commune,
+       COUNT(*) AS itineraries
+FROM fact_itinerary f
+JOIN dim_landmark l USING (landmark_key)
+WHERE l.landmark_key <> -1
+GROUP BY l.landmark_key, l.name, l.commune
+ORDER BY itineraries DESC
+LIMIT 10;
+
+**Distance analysis:**
+
+SELECT a.activity_name,
+       r.category,
+       COUNT(*)                        AS itineraries,
+       ROUND(AVG(f.distance_km), 2)    AS avg_distance_km,
+       MIN(f.distance_km)              AS min_distance_km,
+       MAX(f.distance_km)              AS max_distance_km
+FROM fact_itinerary f
+JOIN dim_activity a USING (activity_key)
+JOIN dim_recipe   r USING (recipe_key)
+GROUP BY a.activity_name, r.category
+ORDER BY a.activity_name, avg_distance_km DESC;
 
 
 ## 8. Expected Product View
