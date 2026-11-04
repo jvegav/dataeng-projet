@@ -1,4 +1,4 @@
-# Deserveat — Food Calories to Physical Routes in Lyon
+# Deserveat — Food Calories to Physical Activities and Routes in Lyon
 
 ## 1. Business Brief
 
@@ -8,7 +8,7 @@ Deserveat helps people in Lyon translate the calories of a chosen dish into an e
 
 ### Data artefact
 
-The main artefact is a PostgreSQL/PostGIS data warehouse organised as a star schema. Its central fact table, `fact_itinerary`, stores one row for each generated itinerary. The fact table is linked to dimensions describing the user, recipe, restaurant, physical activity, date and optional heritage landmark. Recipe calorie data, restaurant information, heritage landmark coordinates and physical-activity MET values are integrated into the warehouse. Synthetic users and itineraries are generated for demonstration purposes.
+The main artefact is a PostgreSQL/PostGIS data warehouse organised as a star schema. Its central fact table, `fact_calorie_burn`, stores one row for each dish whose calories are to be burned for one user at one moment, with one restaurant, one activity, one itinerary and zero or one landmark. The fact table is linked to dimensions describing the user, recipe, restaurant, physical activity, itinerary, date and optional heritage landmark. Recipe calorie data, restaurant information, heritage landmark coordinates, route information and physical-activity MET values are integrated into the warehouse. Synthetic users and calorie-burning requests are generated for demonstration purposes.
 
 The estimated activity duration and distance are calculated from the recipe calories per serving, the user's weight, the selected activity's MET value and the activity's estimated speed. These values are estimates for analytical and demonstration purposes; they do not represent measured calories burned, completed exercise or turn-by-turn road routes.
 
@@ -23,21 +23,21 @@ The estimated activity duration and distance are calculated from the recipe calo
 
 | KPI | Definition | Business meaning |
 |---|---|---|
-| Itinerary generation volume | `COUNT(*)` from `fact_itinerary` | Measures product usage and adoption. |
+| Calorie-burning request volume | `COUNT(*)` from `fact_calorie_burn` | Measures product usage and adoption. |
 | Average estimated activity duration | `AVG(duration_min)` | Measures the estimated time commitment associated with users' food choices. |
 | Landmark inclusion rate | Percentage of facts with a selected landmark key (excluding the `-1` no landmark member) | Measures the use of the heritage-discovery feature. |
 
-These KPIs measure generated itineraries and estimated activity. They do not measure actual calories burned or completed exercise.
+These KPIs measure generated calorie-burning requests and estimated activity. They do not measure actual calories burned or completed exercise.
 
 ### Business questions
 
-1. How many itineraries are generated per day, week and month?
+1. How many calorie-burning requests are generated per day, week and month?
 2. Which activities (walking, running or cycling) are selected most frequently?
 3. Which recipes have the highest average estimated calorie content per itinerary?
 4. What is the average estimated duration required for each activity type?
 5. How does estimated activity duration vary across user weight ranges?
-6. Which restaurants are associated with the greatest number of generated itineraries?
-7. What proportion of itineraries includes a landmark, and which landmarks are selected most often?
+6. Which restaurants are associated with the greatest number of calorie-burning requests?
+7. What proportion of requests includes a landmark, and which landmarks are selected most often?
 8. How does estimated distance vary by activity type and recipe category?
 
 ## 2. Datasets
@@ -84,15 +84,15 @@ The architecture diagram also shows an offline sample of a few hundred recipes a
 - **Protected monuments:** direct CSV download; monthly refresh.
 - **Restaurants:** file-based load; one-off or manual refresh.
 - **MET reference data:** manually maintained seed CSV; static.
-- **Generated itineraries:** daily batch.
+- **Generated calorie-burning requests:** daily batch.
 - **Landing policy:** original files are preserved unchanged, with ingestion metadata and duplicate-load protection.
 
 ### Example data-quality checks
 
 The pipeline should fail its quality gate when a required check fails and report the failure explicitly. Examples include:
 
-- **Null check:** recipe name, calories per serving, activity name and itinerary date must not be null.
-- **Uniqueness check:** source IDs must be unique within each dimension; `itinerary_key` must be unique in `fact_itinerary`.
+- **Null check:** recipe name, calories per serving, activity name, itinerary key and request date must not be null.
+- **Uniqueness check:** source IDs must be unique within each dimension; `calorie_burn_key` must be unique in `fact_calorie_burn`; `itinerary_key` must be unique in `dim_itinerary`.
 - **Range check:** calories, user weight, MET values and estimated speed must be positive.
 - **Geospatial check:** monument and restaurant coordinates must be valid WGS84 points inside the Lyon bounding box (lat 45.55–45.95, lon 4.65–5.15); monuments outside Lyon are filtered out in staging.
 - **Referential-integrity check:** every fact foreign key must resolve to its corresponding dimension; itineraries without a landmark point to the `-1` "No landmark" row.
@@ -101,7 +101,7 @@ The pipeline should fail its quality gate when a required check fails and report
 
 ### Grain
 
-The grain of `fact_itinerary` is **one row per itinerary generated for one user, one recipe, one restaurant, one activity, one date and zero or one landmark**.
+The grain of `fact_calorie_burn` is **one row per dish whose calories are to be burned, for one user at one moment, with one restaurant, one activity, one itinerary and zero or one landmark**. An itinerary is a reusable entity in `dim_itinerary`; the fact table references it through `itinerary_key`.
 
 ![Deserveat star schema](star_schema.jpeg)
 
@@ -111,7 +111,8 @@ The grain of `fact_itinerary` is **one row per itinerary generated for one user,
 
 #### Fact table
 
-- **`fact_itinerary`** — One generated itinerary, with foreign keys to the user, recipe, activity, restaurant, date and optional landmark dimensions. It stores estimated calories to burn, distance and duration, as well as route points and request time.
+- **`fact_calorie_burn`** — One calorie-burning request, with foreign keys to the user, recipe, restaurant, activity, landmark, itinerary and date dimensions. It stores the calories to burn, estimated duration and distance, and the request timestamp.
+- **`dim_itinerary`** — One itinerary entity referenced by the fact table. It stores whether the route starts from a user location or a restaurant, the start and end geography points, and optional turn-by-turn route steps.
 
 #### Dimension tables and SCD choices
 
@@ -124,23 +125,36 @@ The grain of `fact_itinerary` is **one row per itinerary generated for one user,
 | `dim_landmark` | **Type 1** | The current official title, address and coordinates are used. A historical preservation-status requirement has not been specified. |
 | `dim_user` | **Type 2** | Weight can change over time and affects calorie-burn estimates. Effective timestamps and `is_current` preserve the user context used by each itinerary. |
 
+| `dim_itinerary` | **Entity / static per itinerary** | Route geometry and route steps belong to the itinerary entity rather than to the calorie-burning event. An itinerary can therefore be referenced explicitly by the fact row. |
+
+The diagram labels `dim_recipe` and `dim_restaurant` as SCD1, `dim_activity` and `dim_date` as static, and `dim_user` as SCD2. `dim_landmark` is also treated as SCD1. `dim_itinerary` is an entity dimension whose route attributes belong to the itinerary record.
 
 ## 6. Data Dictionary
 
 
 Sources: **[R]** Connected Recipe Data Set `recipes.zip` (GitLab) · **[M]** data.gouv.fr Monuments Historiques CSV · **[K]** Kaggle Lyon Restaurant Reviews · **[S]** MET seed CSV (Compendium of Physical Activities) · **[G]** generated / synthetic. 
 
-**fact_itinerary**: one row per itinerary generated [G]
+**fact_calorie_burn**: one row per dish whose calories are to be burned [G]
 | Column | Type | Description |
 |---|---|---|
-| itinerary_key | INT | PK |
-| recipe_key, activity_key, restaurant_key, user_key, date_key | INT | FKs to dimensions (user = version valid at request time) |
-| landmark_key | INT | FK, `-1` = no landmark |
-| start_point / end_point | GEOGRAPHY(Point,4326) | Restaurant location / landmark location (restaurant again if no landmark) |
-| kcal_to_burn | INT | kcal of one serving |
+| calorie_burn_key | INT | PK |
+| user_key, recipe_key, restaurant_key, activity_key | INT | FKs to dimensions (user = version valid at request time) |
+| landmark_key | INT | FK, `-1` = no landmark; `NOT NULL DEFAULT -1` |
+| itinerary_key | INT | FK to `dim_itinerary` |
+| date_key | INT | FK to `dim_date` |
+| kcal_to_burn | INT | Calories to be burned for the selected dish |
 | duration_min | NUMERIC(7,1) | 60 × kcal / (MET × weight) |
 | distance_km | NUMERIC(7,2) | `speed_kmh × duration_min / 60` |
 | requested_at | TIMESTAMPTZ | Request timestamp |
+
+**dim_itinerary** (entity)
+| Column | Type | Description |
+|---|---|---|
+| itinerary_key | INT | PK |
+| start_type | TEXT | `user_location` or `restaurant` |
+| start_point | GEOGRAPHY(Point,4326) | Route origin; rounded to approximately 200 m when based on a user location |
+| end_point | GEOGRAPHY(Point,4326) | Computed route destination |
+| route_steps | JSONB | Optional turn-by-turn route instructions |
 
 **dim_recipe** (SCD1) [R]
 | Column | Type | Description |
@@ -200,163 +214,141 @@ Sources: **[R]** Connected Recipe Data Set `recipes.zip` (GitLab) · **[M]** dat
 | is_weekend | BOOLEAN | Sat/Sun |
 
 ## 7. Demo Queries
-**-- Q1. Usage trends: itineraries per day / week / month**
 
-**-- Q1a. Per day (includes days with zero itineraries in the active period)**
-```
-SELECT d.full_date,
-       d.day_name,
-       COUNT(f.itinerary_key) AS itineraries
+**-- Q1. Usage trends: calorie-burning requests per day / week / month**
+
+```sql
+SELECT d.full_date, d.day_name, COUNT(f.calorie_burn_key) AS calorie_burn_requests
 FROM dim_date d
-LEFT JOIN fact_itinerary f USING (date_key)
-WHERE d.full_date BETWEEN (SELECT MIN(requested_at)::DATE FROM fact_itinerary)
-                      AND (SELECT MAX(requested_at)::DATE FROM fact_itinerary)
+LEFT JOIN fact_calorie_burn f USING (date_key)
+WHERE d.full_date BETWEEN (SELECT MIN(requested_at)::DATE FROM fact_calorie_burn)
+                      AND (SELECT MAX(requested_at)::DATE FROM fact_calorie_burn)
 GROUP BY d.full_date, d.day_name
 ORDER BY d.full_date;
 ```
 
-**-- Q1b. Per ISO week**
-```
+```sql
 SELECT date_trunc('week', d.full_date)::DATE AS week_start,
-       COUNT(*)                              AS itineraries
-FROM fact_itinerary f
+       COUNT(*) AS calorie_burn_requests
+FROM fact_calorie_burn f
 JOIN dim_date d USING (date_key)
 GROUP BY week_start
 ORDER BY week_start;
 ```
 
-**-- Q1c. Per month, with weekday vs weekend split**
-```
-SELECT d.year,
-       d.month,
-       COUNT(*)                                  AS itineraries,
-       COUNT(*) FILTER (WHERE d.is_weekend)      AS weekend_itineraries,
-       COUNT(*) FILTER (WHERE NOT d.is_weekend)  AS weekday_itineraries
-FROM fact_itinerary f
+```sql
+SELECT d.year, d.month,
+       COUNT(*) AS calorie_burn_requests,
+       COUNT(*) FILTER (WHERE d.is_weekend) AS weekend_requests,
+       COUNT(*) FILTER (WHERE NOT d.is_weekend) AS weekday_requests
+FROM fact_calorie_burn f
 JOIN dim_date d USING (date_key)
 GROUP BY d.year, d.month
 ORDER BY d.year, d.month;
 ```
 
-**-- Q2. Activity preferences: which activities are selected most often?**
+**-- Q2. Activity preferences**
 
-```
+```sql
 SELECT a.activity_name,
-       COUNT(*)                                              AS itineraries,
-       ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1)    AS pct_of_total
-FROM fact_itinerary f
+       COUNT(*) AS calorie_burn_requests,
+       ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS pct_of_total
+FROM fact_calorie_burn f
 JOIN dim_activity a USING (activity_key)
 GROUP BY a.activity_name
-ORDER BY itineraries DESC;
+ORDER BY calorie_burn_requests DESC;
 ```
 
-**-- Q3. Recipe analysis: highest average calorie content per itinerary**
+**-- Q3. Recipes with the highest average calories to burn**
 
-```
-SELECT r.recipe_name,
-       r.category,
-       COUNT(*)                       AS itineraries,
-       ROUND(AVG(f.kcal_to_burn), 0)  AS avg_kcal_per_itinerary
-FROM fact_itinerary f
+```sql
+SELECT r.recipe_name, r.category,
+       COUNT(*) AS calorie_burn_requests,
+       ROUND(AVG(f.kcal_to_burn), 0) AS avg_kcal_to_burn
+FROM fact_calorie_burn f
 JOIN dim_recipe r USING (recipe_key)
 GROUP BY r.recipe_key, r.recipe_name, r.category
-HAVING COUNT(*) >= 1
-ORDER BY avg_kcal_per_itinerary DESC
+ORDER BY avg_kcal_to_burn DESC
 LIMIT 10;
 ```
 
-**-- Q4. Activity duration: average estimated time to burn the dish**
+**-- Q4. Average estimated duration by activity**
 
-```
-SELECT a.activity_name,
-       a.met_value,
-       COUNT(*)                                                         AS itineraries,
-       ROUND(AVG(f.duration_min), 1)                                    AS avg_duration_min,
+```sql
+SELECT a.activity_name, a.met_value,
+       COUNT(*) AS calorie_burn_requests,
+       ROUND(AVG(f.duration_min), 1) AS avg_duration_min,
        ROUND(percentile_cont(0.5) WITHIN GROUP (ORDER BY f.duration_min)::NUMERIC, 1) AS median_duration_min
-FROM fact_itinerary f
+FROM fact_calorie_burn f
 JOIN dim_activity a USING (activity_key)
 GROUP BY a.activity_name, a.met_value
 ORDER BY avg_duration_min DESC;
 ```
 
-**-- Q5. User profiles: duration by weight range (and activity) dim_user is SCD Type 2, so weight_kg is the weight AT REQUEST TIME.**
+**-- Q5. Estimated duration by user weight range**
 
-```
+```sql
 WITH bucketed AS (
-    SELECT f.duration_min,
-           a.activity_name,
-           CASE WHEN u.weight_kg < 60 THEN 1
-                WHEN u.weight_kg < 75 THEN 2
-                WHEN u.weight_kg < 90 THEN 3
-                ELSE 4 END                                AS bucket_order,
-           CASE WHEN u.weight_kg < 60 THEN '< 60 kg'
-                WHEN u.weight_kg < 75 THEN '60-75 kg'
-                WHEN u.weight_kg < 90 THEN '75-90 kg'
-                ELSE '90+ kg' END                         AS weight_range
-    FROM fact_itinerary f
-    JOIN dim_user     u USING (user_key)
+    SELECT f.duration_min, a.activity_name,
+           CASE WHEN u.weight_kg < 60 THEN 1 WHEN u.weight_kg < 75 THEN 2
+                WHEN u.weight_kg < 90 THEN 3 ELSE 4 END AS bucket_order,
+           CASE WHEN u.weight_kg < 60 THEN '< 60 kg' WHEN u.weight_kg < 75 THEN '60-75 kg'
+                WHEN u.weight_kg < 90 THEN '75-90 kg' ELSE '90+ kg' END AS weight_range
+    FROM fact_calorie_burn f
+    JOIN dim_user u USING (user_key)
     JOIN dim_activity a USING (activity_key)
 )
-SELECT weight_range,
-       activity_name,
-       COUNT(*)                       AS itineraries,
-       ROUND(AVG(duration_min), 1)    AS avg_duration_min
+SELECT weight_range, activity_name, COUNT(*) AS calorie_burn_requests,
+       ROUND(AVG(duration_min), 1) AS avg_duration_min
 FROM bucketed
 GROUP BY bucket_order, weight_range, activity_name
 ORDER BY bucket_order, activity_name;
 ```
 
-**-- Q6. Restaurant popularity: most itineraries generated**
-```
-SELECT rs.name,
-       rs.cuisine,
-       rs.rating,
-       COUNT(*)                         AS itineraries,
-       ROUND(AVG(f.kcal_to_burn), 0)    AS avg_kcal_per_itinerary
-FROM fact_itinerary f
+**-- Q6. Restaurant popularity**
+
+```sql
+SELECT rs.name, rs.cuisine, rs.rating,
+       COUNT(*) AS calorie_burn_requests,
+       ROUND(AVG(f.kcal_to_burn), 0) AS avg_kcal_to_burn
+FROM fact_calorie_burn f
 JOIN dim_restaurant rs USING (restaurant_key)
 GROUP BY rs.restaurant_key, rs.name, rs.cuisine, rs.rating
-ORDER BY itineraries DESC, rs.rating DESC
+ORDER BY calorie_burn_requests DESC, rs.rating DESC
 LIMIT 10;
 ```
 
 **-- Q7. Heritage discovery**
 
-**-- Q7a. Share of itineraries that include a landmark**
-
-```
-SELECT COUNT(*)                                           AS total_itineraries,
-       COUNT(*) FILTER (WHERE landmark_key <> -1)         AS with_landmark,
+```sql
+SELECT COUNT(*) AS total_requests,
+       COUNT(*) FILTER (WHERE landmark_key <> -1) AS with_landmark,
        ROUND(100.0 * COUNT(*) FILTER (WHERE landmark_key <> -1)
-             / NULLIF(COUNT(*), 0), 1)                    AS landmark_inclusion_rate_pct
-FROM fact_itinerary;
-```
-**-- Q7b. Most selected landmarks**
+             / NULLIF(COUNT(*), 0), 1) AS landmark_inclusion_rate_pct
+FROM fact_calorie_burn;
 ```
 
-SELECT l.name,
-       l.commune,
-       COUNT(*) AS itineraries
-FROM fact_itinerary f
+```sql
+SELECT l.name, l.commune, COUNT(*) AS calorie_burn_requests
+FROM fact_calorie_burn f
 JOIN dim_landmark l USING (landmark_key)
-WHERE l.landmark_key <> -1
+WHERE f.landmark_key <> -1
 GROUP BY l.landmark_key, l.name, l.commune
-ORDER BY itineraries DESC
+ORDER BY calorie_burn_requests DESC
 LIMIT 10;
 ```
 
-**-- Q8. Distance analysis: estimated distance by activity and recipe category**
+**-- Q8. Estimated distance by activity and recipe category**
 
-```
-SELECT a.activity_name,
-       r.category,
-       COUNT(*)                        AS itineraries,
-       ROUND(AVG(f.distance_km), 2)    AS avg_distance_km,
-       MIN(f.distance_km)              AS min_distance_km,
-       MAX(f.distance_km)              AS max_distance_km
-FROM fact_itinerary f
+```sql
+SELECT a.activity_name, r.category,
+       COUNT(*) AS calorie_burn_requests,
+       ROUND(AVG(f.distance_km), 2) AS avg_distance_km,
+       MIN(f.distance_km) AS min_distance_km,
+       MAX(f.distance_km) AS max_distance_km
+FROM fact_calorie_burn f
 JOIN dim_activity a USING (activity_key)
-JOIN dim_recipe   r USING (recipe_key)
+JOIN dim_recipe r USING (recipe_key)
 GROUP BY a.activity_name, r.category
 ORDER BY a.activity_name, avg_distance_km DESC;
 ```
