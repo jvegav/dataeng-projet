@@ -96,8 +96,6 @@ Last updated: `10/11/2026` by: @kaguir
 - Total number of columns: `78`
 
 **Columns kept**
-- `id`
-- `source id`
 - `Denomination_de_l_edifice`
 - `Adresse_forme_editoriale`
 - `Commune_forme_index`
