@@ -1,0 +1,16 @@
+# Large datasets
+data/raw/*
+data/staging/*
+data/processed/*
+
+# Keep directory structure in Git
+!data/raw/.gitkeep
+!data/staging/.gitkeep
+!data/processed/.gitkeep
+
+# Python temporary files
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
