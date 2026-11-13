@@ -1,6 +1,8 @@
 import pandas as pd
+from config import RAW_DIR
 
-path = "../data/raw/pp_recipes.zip"
+
+path = RAW_DIR / "r_recipes.zip"
 df = pd.read_csv(path, compression="zip", dtype=str)  
 
 print("rows:", len(df))

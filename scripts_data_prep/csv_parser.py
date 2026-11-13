@@ -2,9 +2,11 @@
 import zipfile
 import csv
 import unicodedata
+from config import RAW_DIR
 
-zip_path = "../data/raw/pp_recipes.zip"
-csv_name = "../data/raw/restaurant_data_kaggles.csv"
+
+zip_path = RAW_DIR / "r_recipes.zip"
+csv_name = RAW_DIR / "r_restaurant_data_kaggles.csv"
 
 '''
 #parser csv dans zip

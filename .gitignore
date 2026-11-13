@@ -1,16 +1,16 @@
-# Large datasets
+# Raw data: only the hand-made MET file is versioned
 data/raw/*
-data/staging/*
-data/processed/*
-
-# Keep directory structure in Git
+!data/raw/r_met.csv
 !data/raw/.gitkeep
+
+# Staging: only the MET file is versioned
+data/staging/*
+!data/staging/s_met.csv
 !data/staging/.gitkeep
+
+# Processed: only landmarks (open licence, ~324 rows) and MET are versioned
+# (this also ignores the rejected-rows files)
+data/processed/*
+!data/processed/p_landmarks.csv
+!data/processed/p_met.csv
 !data/processed/.gitkeep
-
-# Python temporary files
-__pycache__/
-*.py[cod]
-
-# Jupyter
-.ipynb_checkpoints/

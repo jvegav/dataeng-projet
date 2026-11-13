@@ -24,14 +24,17 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 - [x] Récupérer `recipes.zip` (GitLab, ~500 000 recettes)
 - [x] Récupérer le CSV des monuments historiques (data.gouv.fr)
 - [x] Ajouter la copie du CSV restaurants Lyon (Kaggle) dans le dépôt
-- [ ] Ajouter le seed MET (voir #5)
-- [ ] Créer `data/raw/`, `data/staging/`, `data/processed/` (avec `.gitkeep`, et `.gitignore` pour les gros fichiers)
+- [x] Ajouter le seed MET (voir #5)
+- [x] Créer `data/raw/`
+- [x] `data/staging/`
+- [x] `data/processed/` 
+- [x] `.gitkeep`, et `.gitignore` pour les gros fichiers
 - [x] Rédiger `docs/sources.md` : lien, licence, date de téléchargement, colonnes conservées, nombre de lignes par fichier
 
 **Livrables** : `data/`, `docs/sources.md`
 **Critères d'acceptation**
-- [ ] Chaque source a un lien, une licence et un nombre de lignes documentés
-- [ ] Les fichiers bruts ne sont jamais modifiés
+- [x] Chaque source a un lien, une licence et un nombre de lignes documentés
+- [x] Les fichiers bruts ne sont jamais modifiés
 
 ---
 

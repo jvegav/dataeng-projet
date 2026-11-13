@@ -1,6 +1,9 @@
 import pandas as pd
+from config import RAW_DIR
 
-df = pd.read_csv("../data/raw/landmarks.csv", sep="|", dtype=str, encoding="utf-8")
+
+file_path = RAW_DIR / "r_landmarks.csv"
+df = pd.read_csv(file_path, sep="|", dtype=str, encoding="utf-8")
 print("rows / cols:", df.shape)  # expect 46761 x 78
 
 lyon_codes = {
