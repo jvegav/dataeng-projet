@@ -1,3 +1,4 @@
+#staging landmarks
 import pandas as pd
 
 from config import RAW_DIR, STAGING_DIR, clean_text
@@ -8,7 +9,7 @@ output_path = STAGING_DIR / "s_landmarks.csv"
 
 # Columns kept (source name -> staging name)
 columns_to_keep = {
-    "Reference": "landmark_key",
+    "Reference": "source_id",
     "Commune_forme_index": "commune",
     "COG_Insee_lors_de_la_protection": "insee_code",
     "Denomination_de_l_edifice": "building_name",

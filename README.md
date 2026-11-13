@@ -25,7 +25,7 @@ The estimated activity duration and distance are calculated from the recipe calo
 |---|---|---|
 | Calorie-burning request volume | `COUNT(*)` from `fact_calorie_burn` | Measures product usage and adoption. |
 | Average estimated activity duration | `AVG(duration_min)` | Measures the estimated time commitment associated with users' food choices. |
-| Landmark inclusion rate | Percentage of facts with a selected landmark key (excluding the `-1` no landmark member) | Measures the use of the heritage-discovery feature. |
+| Landmark inclusion rate | Percentage of facts with a selected landmark (`landmark_key` is not NULL) | Measures the use of the heritage-discovery feature. |
 
 These KPIs measure generated calorie-burning requests and estimated activity. They do not measure actual calories burned or completed exercise.
 
@@ -46,14 +46,14 @@ The project uses file-based batch ingestion. Raw files are retained unchanged in
 
 | Dataset | Source and link | Role | Expected size and columns | Refresh |
 |---|---|---|---|---|
-| Recipes | [Connected Recipe Data Set on GitLab](https://gitlab.com/felix134/connected-recipe-data-set/-/blob/master/data/hummus_data/raw/recipes.zip?ref_type=heads) | Recipe name, ingredients, calories and serving information | Approximately 500,000 recipes. The source contains substantially more than 1,000 rows; the final selected schema contains at least eight useful attributes, including source ID, name, calories, calories per serving, category, ingredients, source file and servings. | One-off download |
+| Recipes | [Connected Recipe Data Set on GitLab](https://gitlab.com/felix134/connected-recipe-data-set/-/raw/eb672598cc4891da0eb436daefcd25b412dad641/data/hummus_data/preprocessed/pp_recipes.zip) | Recipe name, ingredients, calories and serving information | Approximately 500,000 recipes. The source contains substantially more than 1,000 rows; the final selected schema contains at least eight useful attributes, including source ID, title, calories per serving, total calories, category, ingredients, recipe URL and servings. | One-off download |
 | Protected historical monuments | [French open-data dataset on data.gouv.fr](https://www.data.gouv.fr/datasets/immeubles-proteges-au-titre-des-monuments-historiques-2) | Heritage landmark names, addresses and WGS84 coordinates | The source is a large open-government CSV with many columns and more than 1,000 records. The warehouse retains the fields needed for title, address, commune, INSEE code, latitude, longitude and geometry. | Monthly |
-| Lyon restaurant reviews | Lyon Restaurant Reviews dataset (Kaggle; project copy/source URL: **[kaggle]**(https://www.kaggle.com/datasets/launay10christian/lyon-restaurant-reviews-dataset)) | Restaurant names, cuisines, ratings and coordinates used as route origins | Columns: `restaurant_name`, `review_number`, `food_type`, `rankingoverall`, `Rating`, `wifi`, `livraison`, `average_price`, `lat`, `lng`. The warehouse keeps name, cuisine, rating and coordinates. A copy is stored in the repository because Kaggle requires an API key. | One-off download or manual refresh |
-| Physical activity MET seed | Manually curated CSV based on the [Compendium of Physical Activities](https://pacompendium.com/) | MET values and estimated speeds for walking, running and cycling | Small reference seed; it is not intended to satisfy the two large-dataset requirement. The final seed schema contains activity name, intensity, MET value and speed. | Static |
+| Lyon restaurant reviews | Lyon Restaurant Reviews dataset (Kaggle; project copy/source URL: **[kaggle]**(https://www.kaggle.com/datasets/launay10christian/lyon-restaurant-reviews-dataset)) | Restaurant names, cuisines, ratings and coordinates used as route origins | The warehouse keeps `restaurant_name`, `food_type`, `overallRating`, `district`, `lat` and `lng`. The file is downloaded manually from Kaggle (login required) and is not versioned in the repository. | One-off download or manual refresh |
+| Physical activity MET seed | Manually curated CSV based on the [Compendium of Physical Activities](https://pacompendium.com/) | MET values and estimated speeds for walking, running and cycling | Small reference seed; it is not intended to satisfy the two large-dataset requirement. The seed has 9 rows (3 speeds for each activity); its schema contains the Compendium code, activity name, intensity, MET value and speed. | Static |
 
 The recipes and monuments datasets are the two primary qualifying datasets for this project. Their exact post-download row counts and the final source-column inventories should be recorded during ingestion validation.
 
-The architecture diagram also shows an offline sample of a few hundred recipes and approximately 30 landmarks for reproducibility. The repository currently contains a small illustrative sample (`sql/02_sample_data.sql`) used to test the schema and demo queries.
+The architecture diagram also shows an offline sample of a few hundred recipes and approximately 30 landmarks for reproducibility. The repository currently contains a small illustrative sample (`files/02_sample_data.sql`) used to test the schema and demo queries.
 
 ## 3. Tooling and data-engineering lifecycle
 
@@ -94,8 +94,8 @@ The pipeline should fail its quality gate when a required check fails and report
 - **Null check:** recipe name, calories per serving, activity name, itinerary key and request date must not be null.
 - **Uniqueness check:** source IDs must be unique within each dimension; `calorie_burn_key` must be unique in `fact_calorie_burn`; `itinerary_key` must be unique in `dim_itinerary`.
 - **Range check:** calories, user weight, MET values and estimated speed must be positive.
-- **Geospatial check:** monument and restaurant coordinates must be valid WGS84 points inside the Lyon bounding box (lat 45.55–45.95, lon 4.65–5.15); monuments outside Lyon are filtered out in staging.
-- **Referential-integrity check:** every fact foreign key must resolve to its corresponding dimension; itineraries without a landmark point to the `-1` "No landmark" row.
+- **Geospatial check:** monument and restaurant coordinates must be valid WGS84 points inside the Lyon bounding box (lat 45.4–46.1, lon 4.5–5.3); monuments outside the Métropole de Lyon (58 INSEE codes) and points outside the box are rejected in processing.
+- **Referential-integrity check:** every fact foreign key must resolve to its corresponding dimension; facts without a landmark have a NULL `landmark_key`.
 
 ## 5. Data Model
 
@@ -112,19 +112,18 @@ The grain of `fact_calorie_burn` is **one row per dish whose calories are to be 
 #### Fact table
 
 - **`fact_calorie_burn`** — One calorie-burning request, with foreign keys to the user, recipe, restaurant, activity, landmark, itinerary and date dimensions. It stores the calories to burn, estimated duration and distance, and the request timestamp.
-- **`dim_itinerary`** — One itinerary entity referenced by the fact table. It stores whether the route starts from a user location or a restaurant, the start and end geography points, and optional turn-by-turn route steps.
+- **`dim_itinerary`** — One itinerary entity referenced by the fact table. It stores the start and end geography points of the route.
 
 #### Dimension tables and SCD choices
 
 | Dimension | SCD type | Justification |
 |---|---|---|
 | `dim_recipe` | **Type 1** | Recipe corrections and normalisation should update the current descriptive value. Historical recipe versions are not a business requirement for this demonstration. |
-| `dim_activity` | **Static** | Walking, running and cycling are a small controlled reference list whose MET values and speeds are maintained as a curated seed. |
+| `dim_activity` | **Static** | Walking, running and cycling (3 speeds each) are a small controlled reference list whose MET values and speeds are maintained as a curated seed. |
 | `dim_date` | **Static** | Calendar attributes are deterministic and do not change. |
 | `dim_restaurant` | **Type 1** | The current restaurant name, cuisine, rating and coordinates are sufficient for the demonstration; historical restaurant changes are not currently required. |
 | `dim_landmark` | **Type 1** | The current official title, address and coordinates are used. A historical preservation-status requirement has not been specified. |
 | `dim_user` | **Type 2** | Weight can change over time and affects calorie-burn estimates. Effective timestamps and `is_current` preserve the user context used by each itinerary. |
-
 | `dim_itinerary` | **Entity / static per itinerary** | Route geometry and route steps belong to the itinerary entity rather than to the calorie-burning event. An itinerary can therefore be referenced explicitly by the fact row. |
 
 The diagram labels `dim_recipe` and `dim_restaurant` as SCD1, `dim_activity` and `dim_date` as static, and `dim_user` as SCD2. `dim_landmark` is also treated as SCD1. `dim_itinerary` is an entity dimension whose route attributes belong to the itinerary record.
@@ -139,7 +138,7 @@ Sources: **[R]** Connected Recipe Data Set `recipes.zip` (GitLab) · **[M]** dat
 |---|---|---|
 | calorie_burn_key | INT | PK |
 | user_key, recipe_key, restaurant_key, activity_key | INT | FKs to dimensions (user = version valid at request time) |
-| landmark_key | INT | FK, `-1` = no landmark; `NOT NULL DEFAULT -1` |
+| landmark_key | INT | FK, NULL = no landmark |
 | itinerary_key | INT | FK to `dim_itinerary` |
 | date_key | INT | FK to `dim_date` |
 | kcal_to_burn | INT | Calories to be burned for the selected dish |
@@ -151,48 +150,48 @@ Sources: **[R]** Connected Recipe Data Set `recipes.zip` (GitLab) · **[M]** dat
 | Column | Type | Description |
 |---|---|---|
 | itinerary_key | INT | PK |
-| start_type | TEXT | `user_location` or `restaurant` |
 | start_point | GEOGRAPHY(Point,4326) | Route origin; rounded to approximately 200 m when based on a user location |
 | end_point | GEOGRAPHY(Point,4326) | Computed route destination |
-| route_steps | JSONB | Optional turn-by-turn route instructions |
 
 **dim_recipe** (SCD1) [R]
 | Column | Type | Description |
 |---|---|---|
-| source_id | TEXT | `recipe_id` |
-| recipe_name | TEXT | `title` |
-| kcal_per_serving | INT | `calories [cal]` (kcal) |
-| servings | INT | `servingsPerRecipe` |
-| total_kcal | INT | kcal_per_serving × servings |
-| category | TEXT | Derived from `tags` (main, dessert, …) |
-| ingredients | TEXT | `ingredient_food_kg_names` |
-| source_file | TEXT | Lineage (file of origin) |
+| source_id | INT | `recipe_id` |
+| title | TEXT | `title` |
+| kcal_per_serving | INT | `calories [cal]` (values are already kcal, 1–3000) |
+| servings | INT | `servingsPerRecipe` (NULL if missing or ≤ 0) |
+| total_kcal | INT | kcal_per_serving × servings (NULL if servings is NULL) |
+| category | TEXT | `tags` (food.com) |
+| ingredients | TEXT | `ingredients` |
+| recipe_url | TEXT | `recipe_url` |
 
 **dim_restaurant** (SCD1) [K]
 | Column | Type | Description |
 |---|---|---|
-| source_id | TEXT | md5(name, lat, lng) |
-| name | TEXT | `restaurant_name` |
-| cuisine | TEXT | `food_type` |
-| rating | NUMERIC(2,1) | `Rating` (0–5) |
-| lat, lon | DOUBLE PRECISION | `lat`, `lng` (WGS84) |
-| geom | GEOGRAPHY(Point,4326) | Built from lat/lon |
+| source_id | BIGINT | First 15 hex digits of md5(restaurant_name, lat, lng), read as a number |
+| restaurant_name | TEXT | `restaurant_name` |
+| food_type | TEXT | `food_type` |
+| lat, lng | DOUBLE PRECISION | `lat`, `lng` (WGS84) |
+| geom | GEOGRAPHY(Point,4326) | Built from lat/lng |
+| overall_rating | NUMERIC(3,2) | `overallRating` (0–5) |
+| district | TEXT | `district` |
 
 **dim_landmark** (SCD1) [M]
 | Column | Type | Description |
 |---|---|---|
-| source_id | TEXT | Mérimée reference |
-| name | TEXT | Monument title |
+| source_id | TEXT | Mérimée reference (`Reference`) |
+| building_name | TEXT | Monument title (`Denomination_de_l_edifice`) |
 | address, commune | TEXT | Location |
-| insee_code | CHAR(5) | Lyon: 69381–69389 |
+| insee_code | CHAR(5) | One of the 58 INSEE codes of the Métropole de Lyon |
 | lat, lon | DOUBLE PRECISION | WGS84 coordinates |
 | geom | GEOGRAPHY(Point,4326) | Built from lat/lon |
 
 **dim_activity** (Static) [S]
 | Column | Type | Description |
 |---|---|---|
-| activity_name | TEXT | walking, running, cycling |
-| intensity | INT | 1 low – 3 vigorous |
+| activity_key | INT | Compendium code |
+| activity_name | TEXT | Activity and speed shown to the user, e.g. Moderate Walk |
+| intensity | INT | 1 light – 3 vigorous (computed from the MET value) |
 | met_value | NUMERIC(4,2) | Metabolic equivalent |
 | speed_kmh | NUMERIC(5,2) | Assumed average speed |
 
@@ -262,12 +261,12 @@ ORDER BY calorie_burn_requests DESC;
 **-- Q3. Recipes with the highest average calories to burn**
 
 ```sql
-SELECT r.recipe_name, r.category,
+SELECT r.title, r.category,
        COUNT(*) AS calorie_burn_requests,
        ROUND(AVG(f.kcal_to_burn), 0) AS avg_kcal_to_burn
 FROM fact_calorie_burn f
 JOIN dim_recipe r USING (recipe_key)
-GROUP BY r.recipe_key, r.recipe_name, r.category
+GROUP BY r.recipe_key, r.title, r.category
 ORDER BY avg_kcal_to_burn DESC
 LIMIT 10;
 ```
@@ -308,13 +307,13 @@ ORDER BY bucket_order, activity_name;
 **-- Q6. Restaurant popularity**
 
 ```sql
-SELECT rs.name, rs.cuisine, rs.rating,
+SELECT rs.restaurant_name, rs.food_type, rs.overall_rating,
        COUNT(*) AS calorie_burn_requests,
        ROUND(AVG(f.kcal_to_burn), 0) AS avg_kcal_to_burn
 FROM fact_calorie_burn f
 JOIN dim_restaurant rs USING (restaurant_key)
-GROUP BY rs.restaurant_key, rs.name, rs.cuisine, rs.rating
-ORDER BY calorie_burn_requests DESC, rs.rating DESC
+GROUP BY rs.restaurant_key, rs.restaurant_name, rs.food_type, rs.overall_rating
+ORDER BY calorie_burn_requests DESC, rs.overall_rating DESC
 LIMIT 10;
 ```
 
@@ -322,18 +321,17 @@ LIMIT 10;
 
 ```sql
 SELECT COUNT(*) AS total_requests,
-       COUNT(*) FILTER (WHERE landmark_key <> -1) AS with_landmark,
-       ROUND(100.0 * COUNT(*) FILTER (WHERE landmark_key <> -1)
+       COUNT(*) FILTER (WHERE landmark_key IS NOT NULL) AS with_landmark,
+       ROUND(100.0 * COUNT(*) FILTER (WHERE landmark_key IS NOT NULL)
              / NULLIF(COUNT(*), 0), 1) AS landmark_inclusion_rate_pct
 FROM fact_calorie_burn;
 ```
 
 ```sql
-SELECT l.name, l.commune, COUNT(*) AS calorie_burn_requests
+SELECT l.building_name, l.commune, COUNT(*) AS calorie_burn_requests
 FROM fact_calorie_burn f
 JOIN dim_landmark l USING (landmark_key)
-WHERE f.landmark_key <> -1
-GROUP BY l.landmark_key, l.name, l.commune
+GROUP BY l.landmark_key, l.building_name, l.commune
 ORDER BY calorie_burn_requests DESC
 LIMIT 10;
 ```

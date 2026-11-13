@@ -1,3 +1,4 @@
+#staging recipes
 import os
 import zipfile
 
@@ -16,7 +17,7 @@ chunk_size = int(os.environ.get("CHUNK_SIZE", 50_000))
 
 # Columns kept (source name -> staging name)
 columns_to_keep = {
-    "recipe_id": "recipe_id",
+    "recipe_id": "source_id",
     "title": "title",
     "ingredients": "ingredients",
     "recipe_url": "recipe_url",
@@ -25,7 +26,7 @@ columns_to_keep = {
     "tags": "category"
 }
 
-string_columns = ["recipe_id", "title", "ingredients", "recipe_url", "category"]
+string_columns = ["source_id", "title", "ingredients", "recipe_url", "category"]
 numeric_columns = ["servings", "kcal_per_serving"]
 
 output_path.parent.mkdir(parents=True, exist_ok=True)

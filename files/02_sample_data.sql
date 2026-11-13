@@ -1,48 +1,53 @@
 -- =====================================================================
--- DeservEat – Synthetic sample data (for demo queries only)
+-- DeservEat - Synthetic sample data (for demo queries only)
 -- Recipes, restaurants and users are FICTIONAL sample rows; landmark
 -- coordinates are approximate real locations with placeholder IDs.
 -- Real loads come from the Airflow staging -> production step.
+-- Run after 01_ddl.sql.
 -- =====================================================================
 SET search_path = dw, public;
 
--- dim_date: generated calendar for 2026
-INSERT INTO dim_date (date_key, full_date, day_of_week, day_name, month, year, is_weekend)
-SELECT to_char(d, 'YYYYMMDD')::INT,
-       d::DATE,
-       EXTRACT(ISODOW FROM d)::INT,
-       trim(to_char(d, 'Day')),
-       EXTRACT(MONTH FROM d)::INT,
-       EXTRACT(YEAR FROM d)::INT,
-       EXTRACT(ISODOW FROM d) IN (6, 7)
-FROM generate_series('2026-01-01'::DATE, '2026-12-31'::DATE, INTERVAL '1 day') AS d;
+-- dim_date: already filled by 01_ddl.sql (2026-01-01 to 2027-12-31)
 
--- dim_activity: MET seed (2011 Compendium of Physical Activities, codes 17190, 12050, 01040)
+-- dim_activity: the 9 MET rows of p_met.csv (activity_key = Compendium code)
 INSERT INTO dim_activity (activity_key, activity_name, intensity, met_value, speed_kmh) VALUES
-    (1, 'walking', 1, 3.50,  4.80),   -- walking 3.0 mph, level, moderate pace
-    (2, 'running', 3, 9.80,  9.70),   -- running 6 mph (10 min/mile)
-    (3, 'cycling', 2, 8.00, 20.00);   -- leisure cycling 12-13.9 mph, moderate effort
+    (17170, 'Slow Walk',        1,  3.00,  4.02),
+    (17200, 'Moderate Walk',    2,  4.80,  5.95),
+    (17220, 'Fast Walk',        2,  5.50,  6.76),
+    (12030, 'Slow Run',         3,  8.50,  8.20),
+    (12050, 'Moderate Run',     3,  9.30,  9.90),
+    (12090, 'Fast Run',         3, 12.00, 12.87),
+    (1020,  'Leisure Cycling',  3,  6.80, 17.60),
+    (1030,  'Moderate Cycling', 3,  8.00, 20.84),
+    (1040,  'Fast Cycling',     3, 10.00, 24.14);
 
--- dim_recipe (fictional sample rows)
-INSERT INTO dim_recipe (source_id, recipe_name, total_kcal, kcal_per_serving, category, ingredients, source_file, servings) VALUES
-    ('sample-001', 'Classic Beef Lasagna',   4160, 520, 'main',       'lasagna noodles, ground beef, ricotta, mozzarella, tomato sauce', 'recipes.zip/pp_recipes.csv', 8),
-    ('sample-002', 'Chocolate Chip Cookies', 4320, 180, 'dessert',    'flour, butter, sugar, eggs, chocolate chips',                     'recipes.zip/pp_recipes.csv', 24),
-    ('sample-003', 'Greek Salad',             840, 210, 'side_salad', 'tomato, cucumber, feta, olives, olive oil',                       'recipes.zip/pp_recipes.csv', 4),
-    ('sample-004', 'Tartiflette',            3300, 825, 'main',       'potatoes, reblochon, lardons, onion, cream',                     'recipes.zip/pp_recipes.csv', 4);
+-- dim_recipe (fictional sample rows). source_id = recipe_id: 9000000xx cannot clash with real recipes
+-- category = cuisine type
+INSERT INTO dim_recipe (source_id, title, total_kcal, kcal_per_serving, category, ingredients, recipe_url, servings) VALUES
+    (900000001, 'Classic Beef Lasagna',   4160, 520, 'Italian',    'lasagna noodles, ground beef, ricotta, mozzarella, tomato sauce', NULL, 8),
+    (900000002, 'Chocolate Chip Cookies', 4320, 180, 'American',   'flour, butter, sugar, eggs, chocolate chips',                     NULL, 24),
+    (900000003, 'Greek Salad',             840, 210, 'Greek',      'tomato, cucumber, feta, olives, olive oil',                       NULL, 4),
+    (900000004, 'Tartiflette',            3300, 825, 'French',     'potatoes, reblochon, lardons, onion, cream',                      NULL, 4);
 
 -- dim_restaurant (fictional sample rows, Lyon coordinates)
-INSERT INTO dim_restaurant (source_id, name, cuisine, rating, lat, lon, geom) VALUES
-    (md5('Bouchon Sample A|45.7640|4.8357'), 'Bouchon Sample A', 'French',  4.5, 45.7640, 4.8357, ST_SetSRID(ST_MakePoint(4.8357, 45.7640), 4326)::GEOGRAPHY),
-    (md5('Trattoria Sample B|45.7578|4.8320'), 'Trattoria Sample B', 'Italian', 4.0, 45.7578, 4.8320, ST_SetSRID(ST_MakePoint(4.8320, 45.7578), 4326)::GEOGRAPHY),
-    (md5('Brasserie Sample C|45.7485|4.8467'), 'Brasserie Sample C', 'Brasserie', 3.5, 45.7485, 4.8467, ST_SetSRID(ST_MakePoint(4.8467, 45.7485), 4326)::GEOGRAPHY);
+-- source_id = first 15 hex digits of md5(restaurant_name|lat|lng) read as a number, as in processing_restaurants.py
+INSERT INTO dim_restaurant (source_id, restaurant_name, food_type, lat, lng, geom, overall_rating, district)
+SELECT ('x' || substr(md5(v.name || '|' || v.lat || '|' || v.lng), 1, 15))::bit(60)::bigint,
+       v.name, v.food_type, v.lat, v.lng,
+       ST_SetSRID(ST_MakePoint(v.lng, v.lat), 4326)::GEOGRAPHY,
+       v.rating, v.district
+FROM (VALUES
+    ('Bouchon Sample A',   'French',    45.764::DOUBLE PRECISION,  4.8357::DOUBLE PRECISION, 4.5, 'Lyon 1'),
+    ('Trattoria Sample B', 'Italian',   45.7578::DOUBLE PRECISION, 4.832::DOUBLE PRECISION,  4.0, 'Lyon 2'),
+    ('Brasserie Sample C', 'Brasserie', 45.7485::DOUBLE PRECISION, 4.8467::DOUBLE PRECISION, 3.5, 'Lyon 3')
+) AS v (name, food_type, lat, lng, rating, district);
 
--- dim_landmark: "No landmark" member + sample monuments (placeholder Mérimée IDs)
-INSERT INTO dim_landmark (landmark_key, source_id, name, address, commune, insee_code, lat, lon, geom) VALUES
-    (-1, 'N/A', 'No landmark', NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO dim_landmark (source_id, name, address, commune, insee_code, lat, lon, geom) VALUES
-    ('PA_SAMPLE_1', 'Basilique Notre-Dame de Fourvière', 'Place de Fourvière', 'Lyon 5e Arrondissement', '69385', 45.7623, 4.8225, ST_SetSRID(ST_MakePoint(4.8225, 45.7623), 4326)::GEOGRAPHY),
-    ('PA_SAMPLE_2', 'Cathédrale Saint-Jean',             'Place Saint-Jean',   'Lyon 5e Arrondissement', '69385', 45.7608, 4.8274, ST_SetSRID(ST_MakePoint(4.8274, 45.7608), 4326)::GEOGRAPHY),
-    ('PA_SAMPLE_3', 'Hôtel de Ville de Lyon',            'Place des Terreaux', 'Lyon 1er Arrondissement', '69381', 45.7676, 4.8363, ST_SetSRID(ST_MakePoint(4.8363, 45.7676), 4326)::GEOGRAPHY);
+-- dim_landmark: sample monuments (placeholder Merimee references). landmark_key is generated by the database
+-- insee_code 69123 = Lyon, one of the Metropole codes kept by processing_landmarks.py
+INSERT INTO dim_landmark (source_id, building_name, address, commune, insee_code, lat, lon, geom) VALUES
+    ('PA900000001', 'Basilique Notre-Dame de Fourvière', 'Place de Fourvière', 'Lyon', '69123', 45.7623, 4.8225, ST_SetSRID(ST_MakePoint(4.8225, 45.7623), 4326)::GEOGRAPHY),
+    ('PA900000002', 'Cathédrale Saint-Jean',             'Place Saint-Jean',   'Lyon', '69123', 45.7608, 4.8274, ST_SetSRID(ST_MakePoint(4.8274, 45.7608), 4326)::GEOGRAPHY),
+    ('PA900000003', 'Hôtel de Ville de Lyon',            'Place des Terreaux', 'Lyon', '69123', 45.7676, 4.8363, ST_SetSRID(ST_MakePoint(4.8363, 45.7676), 4326)::GEOGRAPHY);
 
 -- dim_user (synthetic). u001 shows SCD Type 2: weight changed on 2026-06-01
 INSERT INTO dim_user (user_id, weight_kg, valid_from, valid_to, is_current) VALUES
@@ -52,43 +57,59 @@ INSERT INTO dim_user (user_id, weight_kg, valid_from, valid_to, is_current) VALU
     ('u003', 82.0, '2026-01-01 00:00+01', '9999-12-31 00:00+00', TRUE),
     ('u004', 95.0, '2026-01-01 00:00+01', '9999-12-31 00:00+00', TRUE);
 
--- fact_itinerary: built the same way the production step would build it.
+-- The 12 sample requests. request_no is also used as itinerary_key (one itinerary per request).
+CREATE TEMP TABLE sample_request AS
+SELECT * FROM (VALUES
+    (1,  'u001', 900000001, 'Moderate Run',     'Bouchon Sample A',   'PA900000001', TIMESTAMPTZ '2026-03-14 12:10+01'),
+    (2,  'u001', 900000004, 'Slow Walk',        'Bouchon Sample A',   NULL,          TIMESTAMPTZ '2026-03-19 19:45+01'),
+    (3,  'u001', 900000001, 'Fast Run',         'Trattoria Sample B', 'PA900000002', TIMESTAMPTZ '2026-07-07 13:00+02'),
+    (4,  'u002', 900000002, 'Fast Walk',        'Trattoria Sample B', 'PA900000002', TIMESTAMPTZ '2026-07-05 16:20+02'),
+    (5,  'u002', 900000003, 'Leisure Cycling',  'Brasserie Sample C', NULL,          TIMESTAMPTZ '2026-07-11 12:30+02'),
+    (6,  'u003', 900000004, 'Moderate Cycling', 'Bouchon Sample A',   'PA900000003', TIMESTAMPTZ '2026-08-02 20:15+02'),
+    (7,  'u003', 900000001, 'Moderate Walk',    'Brasserie Sample C', NULL,          TIMESTAMPTZ '2026-08-12 13:05+02'),
+    (8,  'u004', 900000004, 'Slow Run',         'Bouchon Sample A',   'PA900000001', TIMESTAMPTZ '2026-09-06 19:30+02'),
+    (9,  'u004', 900000002, 'Fast Cycling',     'Trattoria Sample B', 'PA900000003', TIMESTAMPTZ '2026-09-12 15:40+02'),
+    (10, 'u002', 900000001, 'Moderate Run',     'Bouchon Sample A',   'PA900000001', TIMESTAMPTZ '2026-10-03 12:45+02'),
+    (11, 'u003', 900000003, 'Slow Walk',        'Trattoria Sample B', 'PA900000002', TIMESTAMPTZ '2026-10-14 18:00+02'),
+    (12, 'u001', 900000002, 'Moderate Walk',    'Brasserie Sample C', NULL,          TIMESTAMPTZ '2026-10-17 11:30+02')
+) AS v (request_no, user_id, recipe_src, activity, restaurant, landmark_ref, requested_at);
+
+-- dim_itinerary first (explicit keys): from the restaurant, to the landmark, or back to the restaurant (loop)
+INSERT INTO dim_itinerary (itinerary_key, start_point, end_point)
+SELECT q.request_no, rs.geom, COALESCE(l.geom, rs.geom)
+FROM sample_request q
+JOIN dim_restaurant rs ON rs.restaurant_name = q.restaurant
+LEFT JOIN dim_landmark l ON l.source_id = q.landmark_ref;
+
+-- The next generated itinerary_key must not clash with the explicit ones
+SELECT setval(pg_get_serial_sequence('dw.dim_itinerary', 'itinerary_key'),
+              (SELECT max(itinerary_key) FROM dim_itinerary));
+
+-- fact_calorie_burn: built the same way the production step would build it.
 --   duration_h  = kcal / (MET * weight_kg)        (kcal/h ≈ MET * kg)
 --   distance_km = speed_kmh * duration_h
 --   user_key    = dim_user version valid at requested_at (SCD2 lookup)
---   landmark    = -1 when none requested
-INSERT INTO fact_itinerary (recipe_key, activity_key, landmark_key, user_key, restaurant_key, date_key,
-                            start_point, end_point, kcal_to_burn, distance_km, duration_min, requested_at)
+--   landmark    = NULL when none requested
+INSERT INTO fact_calorie_burn (recipe_key, activity_key, landmark_key, user_key, restaurant_key, date_key,
+                               itinerary_key, kcal_to_burn, distance_km, duration_min, requested_at)
 SELECT r.recipe_key,
        a.activity_key,
-       COALESCE(l.landmark_key, -1),
+       l.landmark_key,
        u.user_key,
        rs.restaurant_key,
-       to_char(v.requested_at AT TIME ZONE 'Europe/Paris', 'YYYYMMDD')::INT,
-       rs.geom,
-       COALESCE(l.geom, rs.geom),
+       to_char(q.requested_at AT TIME ZONE 'Europe/Paris', 'YYYYMMDD')::INT,
+       q.request_no,
        r.kcal_per_serving,                                                     -- 1 serving
        ROUND(a.speed_kmh * r.kcal_per_serving / (a.met_value * u.weight_kg), 2),
        ROUND(60 * r.kcal_per_serving / (a.met_value * u.weight_kg), 1),
-       v.requested_at
-FROM (VALUES
-    ('u001', 'sample-001', 'running', 'Bouchon Sample A',   'PA_SAMPLE_1', TIMESTAMPTZ '2026-03-14 12:10+01'),
-    ('u001', 'sample-004', 'walking', 'Bouchon Sample A',   NULL,          TIMESTAMPTZ '2026-03-19 19:45+01'),
-    ('u001', 'sample-001', 'running', 'Trattoria Sample B', 'PA_SAMPLE_2', TIMESTAMPTZ '2026-07-07 13:00+02'),
-    ('u002', 'sample-002', 'walking', 'Trattoria Sample B', 'PA_SAMPLE_2', TIMESTAMPTZ '2026-07-05 16:20+02'),
-    ('u002', 'sample-003', 'cycling', 'Brasserie Sample C', NULL,          TIMESTAMPTZ '2026-07-11 12:30+02'),
-    ('u003', 'sample-004', 'cycling', 'Bouchon Sample A',   'PA_SAMPLE_3', TIMESTAMPTZ '2026-08-02 20:15+02'),
-    ('u003', 'sample-001', 'walking', 'Brasserie Sample C', NULL,          TIMESTAMPTZ '2026-08-12 13:05+02'),
-    ('u004', 'sample-004', 'running', 'Bouchon Sample A',   'PA_SAMPLE_1', TIMESTAMPTZ '2026-09-06 19:30+02'),
-    ('u004', 'sample-002', 'cycling', 'Trattoria Sample B', 'PA_SAMPLE_3', TIMESTAMPTZ '2026-09-12 15:40+02'),
-    ('u002', 'sample-001', 'running', 'Bouchon Sample A',   'PA_SAMPLE_1', TIMESTAMPTZ '2026-10-03 12:45+02'),
-    ('u003', 'sample-003', 'walking', 'Trattoria Sample B', 'PA_SAMPLE_2', TIMESTAMPTZ '2026-10-14 18:00+02'),
-    ('u001', 'sample-002', 'walking', 'Brasserie Sample C', NULL,          TIMESTAMPTZ '2026-10-17 11:30+02')
-) AS v (user_id, recipe_src, activity, restaurant, landmark_src, requested_at)
-JOIN dim_recipe     r  ON r.source_id = v.recipe_src
-JOIN dim_activity   a  ON a.activity_name = v.activity
-JOIN dim_restaurant rs ON rs.name = v.restaurant
-JOIN dim_user       u  ON u.user_id = v.user_id
-                      AND v.requested_at >= u.valid_from
-                      AND v.requested_at <  u.valid_to
-LEFT JOIN dim_landmark l ON l.source_id = v.landmark_src;
+       q.requested_at
+FROM sample_request q
+JOIN dim_recipe     r  ON r.source_id = q.recipe_src
+JOIN dim_activity   a  ON a.activity_name = q.activity
+JOIN dim_restaurant rs ON rs.restaurant_name = q.restaurant
+JOIN dim_user       u  ON u.user_id = q.user_id
+                      AND q.requested_at >= u.valid_from
+                      AND q.requested_at <  u.valid_to
+LEFT JOIN dim_landmark l ON l.source_id = q.landmark_ref;
+
+DROP TABLE sample_request;

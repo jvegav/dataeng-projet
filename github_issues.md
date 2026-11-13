@@ -29,9 +29,9 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 - [x] `data/staging/`
 - [x] `data/processed/` 
 - [x] `.gitkeep`, et `.gitignore` pour les gros fichiers
-- [x] Rédiger `docs/sources.md` : lien, licence, date de téléchargement, colonnes conservées, nombre de lignes par fichier
+- [x] Rédiger `documentation/sources.md` : lien, licence, date de téléchargement, colonnes conservées, nombre de lignes par fichier
 
-**Livrables** : `data/`, `docs/sources.md`
+**Livrables** : `data/`, `documentation/sources.md`
 **Critères d'acceptation**
 - [x] Chaque source a un lien, une licence et un nombre de lignes documentés
 - [x] Les fichiers bruts ne sont jamais modifiés
@@ -42,18 +42,18 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @kaguir · **Labels :** `kaguir-ingestion` · **Milestone :** M2 · **Branche :** `feature/issue-02-recipes-ingestion` · **Dépend de :** #1
 
 **À faire**
-- [ ] `src/ingestion/recipes.py` : lecture du ZIP par blocs (chunks)
-- [ ] Extraire `source_id`, `recipe_name`, `total_kcal`, `kcal_per_serving`, `servings`, `category`, `ingredients`, `source_file`
-- [ ] Dériver `category` à partir des `tags` (main, dessert, breakfast, appetizer_snack, side_salad, other)
-- [ ] Gérer nulls et valeurs invalides (`kcal_per_serving` hors 1–3000, `servings` ≤ 0)
-- [ ] Dédupliquer sur `source_id`
-- [ ] Écrire les lignes rejetées dans `data/processed/recipes_rejected.csv` avec la règle violée
-- [ ] Produire `data/processed/recipes_clean.csv`
+- [x] `scripts_data_prep/staging_recipes.py` et `processing_recipes.py` : lecture du ZIP, traitement par blocs (chunks)
+- [x] Colonnes conservées : `source_id`, `title`, `ingredients`, `recipe_url`, `servings`, `kcal_per_serving`, `category`, et `total_kcal` calculé
+- [x] `category` = `tags` de food.com (types de plats), sans `CHECK` sur les valeurs
+- [x] Gérer nulls et valeurs invalides : calories lues en kcal (aucune conversion) puis arrondies, rejet si `kcal_per_serving` hors 1–3000, `servings` manquant, ≤ 0 ou arrondi à 0 → NULL (ligne conservée)
+- [x] Dédupliquer sur `source_id` (entier ; devient `dim_recipe.source_id`)
+- [x] Écrire les lignes rejetées dans `data/processed/p_recipes_rejected.csv` avec la règle violée (`reject_reason`)
+- [x] Produire `data/processed/p_recipes.csv`
 
 **Critères d'acceptation**
 - [ ] Les lignes valides respectent les `CHECK` du DDL (`dim_recipe`)
-- [ ] Chaque rejet porte un motif
-- [ ] Relancer le script ne produit pas de doublons
+- [x] Chaque rejet porte un motif
+- [x] Relancer le script ne produit pas de doublons
 
 ---
 
@@ -61,16 +61,16 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @kaguir · **Labels :** `kaguir-ingestion` · **Milestone :** M2 · **Branche :** `feature/issue-03-restaurants-ingestion` · **Dépend de :** #1
 
 **À faire**
-- [ ] `src/ingestion/restaurants.py`
-- [ ] Conserver `restaurant_name`, `food_type`, `Rating`, `lat`, `lng`
-- [ ] `source_id = md5(restaurant_name|lat|lng)` (même formule que `02_sample_data.sql`)
-- [ ] Filtrer hors Lyon (lat 45.55–45.95, lon 4.65–5.15)
-- [ ] Écrire `data/processed/restaurants_clean.csv` et le fichier de rejets
-- [ ] Préparer la colonne géométrie (WKT ou lat/lon pour construction côté SQL)
+- [x] `scripts_data_prep/staging_restaurants.py` et `processing_restaurants.py`
+- [x] Conserver `restaurant_name`, `food_type`, `lat`, `lng`, `overall_rating`, `district`
+- [x] `source_id` numérique (`BIGINT`) : 15 premiers caractères hexadécimaux de `md5(restaurant_name|lat|lng)` lus comme un nombre (calculé dans `processing_restaurants.py` ; même formule dans `02_sample_data.sql`, #10)
+- [x] Filtrer hors Lyon (bounding box lat 45.4–46.1, lon 4.5–5.3)
+- [x] Écrire `data/processed/p_restaurants.csv` et `p_restaurants_rejected.csv`
+- [x] Garder `lat` et `lng` pour construire la géométrie côté SQL
 
 **Critères d'acceptation**
-- [ ] Toutes les coordonnées sont dans la bounding box
-- [ ] `source_id` unique
+- [x] Toutes les coordonnées sont dans la bounding box
+- [x] `source_id` unique
 
 ---
 
@@ -78,16 +78,16 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @kaguir · **Labels :** `kaguir-ingestion` · **Milestone :** M2 · **Branche :** `feature/issue-04-landmarks-ingestion` · **Dépend de :** #1
 
 **À faire**
-- [ ] `src/ingestion/landmarks.py`
-- [ ] Conserver référence Mérimée, nom, adresse, commune, code INSEE, lat, lon
-- [ ] Filtrer hors Lyon (INSEE 69381–69389 et bounding box)
-- [ ] Gérer les coordonnées manquantes (rejet tracé)
-- [ ] Préparer la ligne spéciale `landmark_key = -1` / « No landmark » (à valider avec @Marti820)
-- [ ] Écrire `data/processed/landmarks_clean.csv` et le fichier de rejets
+- [x] `scripts_data_prep/staging_landmarks.py` et `processing_landmarks.py`
+- [x] Conserver `source_id` (référence Mérimée, texte, ex. `PA00117123`), `building_name`, `address`, `commune`, `insee_code`, `lat`, `lon`
+- [x] Filtrer sur la Métropole de Lyon (58 codes INSEE) et sur la bounding box (lat 45.4–46.1, lon 4.5–5.3)
+- [x] Gérer les coordonnées et le `building_name` manquants (rejet tracé)
+- [x] Pas de ligne `-1` : un fait sans monument a `landmark_key` NULL (décision)
+- [x] Écrire `data/processed/p_landmarks.csv` et `p_landmarks_rejected.csv`
 
 **Critères d'acceptation**
-- [ ] Aucun monument hors Lyon
-- [ ] Référence Mérimée unique
+- [x] Aucun monument hors de la Métropole de Lyon
+- [x] Référence Mérimée unique
 
 ---
 
@@ -95,25 +95,24 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @kaguir · **Labels :** `kaguir-ingestion` · **Milestone :** M2 · **Branche :** `feature/issue-05-reference-data`
 
 **À faire**
-- [ ] `data/raw/met_activities.csv` : walking (intensité 1, MET 3.5, 4.8 km/h), running (3, 9.8, 9.7), cycling (2, 8.0, 20.0)
-- [ ] Citer les codes du Compendium of Physical Activities dans `docs/sources.md`
-- [ ] Script de génération de `dim_date` (plage couvrant toutes les dates de requêtes, par exemple 2026–2027)
-- [ ] Colonnes : `date_key` (YYYYMMDD), `full_date`, `day_of_week` (ISO), `day_name`, `month`, `year`, `is_weekend`
+- [x] `data/raw/r_met.csv` : 9 lignes (3 types d'activité × 3 vitesses), colonnes `activity_key` (code du Compendium), `activity_name`, `speed_kmh`, `met_value`, `intensity` (calculée à partir du MET : 1 light, 2 moderate, 3 vigorous), copié à la main dans `data/processed/p_met.csv` (pas de staging ni de processing)
+- [x] Documenter dans `documentation/sources.md` l'origine du seed (Compendium 2024, `activity_key` = code du Compendium) et la règle de calcul de `intensity` à partir du MET
+- [x] `dim_date` : une ligne par jour du 2026-01-01 au 2027-12-31, générée en SQL (`generate_series`) dans `01_ddl.sql`, colonnes `date_key` (YYYYMMDD), `full_date`, `day_of_week` (ISO), `day_name`, `month`, `year`, `is_weekend`
 
 **Critères d'acceptation**
-- [ ] MET et vitesses > 0
-- [ ] Une ligne par jour, sans trou
+- [x] MET et vitesses > 0
+- [x] Une ligne par jour, sans trou
 
 ---
 
 ## #6 — Tests d'ingestion
 **Assigné :** @kaguir · **Labels :** `kaguir-ingestion`, `tests` · **Milestone :** M2 · **Branche :** `feature/issue-06-ingestion-tests` · **Dépend de :** #2, #3, #4, #5
 
-**À faire** (`tests/ingestion/`)
+**À faire** (`tests/ingestion/`, sur les fichiers `p_*.csv`)
 - [ ] Nombre de lignes minimum par source
 - [ ] Unicité des identifiants
 - [ ] Calories positives
-- [ ] Poids, MET et vitesses positifs
+- [ ] MET et vitesses positifs (le poids est dans `dim_user`, côté @Marti820)
 - [ ] Coordonnées valides (WGS84, bounding box)
 - [ ] Absence de doublons
 - [ ] Colonnes obligatoires présentes
@@ -141,12 +140,12 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @kaguir · **Labels :** `kaguir-ingestion` · **Milestone :** M2 · **Branche :** `feature/issue-20-ingestion-log` · **Dépend de :** #2
 
 **À faire**
-- [ ] Table `landing.ingestion_log` (ou fichier JSON) : source, date, hash du fichier, lignes lues, lignes rejetées
-- [ ] Ignorer un fichier déjà chargé (même hash)
-- [ ] Zone landing : fichiers bruts conservés sans modification
+- [x] Fichier JSON `data/ingestion_log.json` (écrit par `run_pipeline.py`) : source, date, hash du fichier, lignes lues, conservées, rejetées
+- [x] Ignorer un fichier déjà chargé (même hash du fichier brut et des scripts)
+- [x] Zone landing : fichiers bruts conservés sans modification (`data/raw/`, lus seulement)
 
 **Critères d'acceptation**
-- [ ] Deux exécutions consécutives produisent le même état et une seule ligne de journal par fichier
+- [x] Deux exécutions consécutives produisent le même état et une seule ligne de journal par fichier
 
 ---
 
@@ -159,7 +158,7 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 - [ ] Supprimer `fact_itinerary`
 - [ ] Créer `dim_user`, `dim_recipe`, `dim_restaurant`, `dim_landmark`, `dim_activity`, `dim_date`, `dim_itinerary`, `fact_calorie_burn`
 - [ ] Ordre : dimensions → `dim_itinerary` → fait
-- [ ] Fait : `calorie_burn_key`, `user_key`, `recipe_key`, `restaurant_key`, `activity_key`, `landmark_key` (`NOT NULL DEFAULT -1`), `itinerary_key`, `date_key`, `kcal_to_burn`, `duration_min`, `distance_km`, `requested_at`
+- [ ] Fait : `calorie_burn_key`, `user_key`, `recipe_key`, `restaurant_key`, `activity_key`, `landmark_key` (nullable : NULL = sans monument), `itinerary_key`, `date_key`, `kcal_to_burn`, `duration_min`, `distance_km`, `requested_at`
 - [ ] Créer les schémas `landing`, `staging`, `dw` et `staging.rejected_rows`
 - [ ] Qualifier les tables ou documenter le `search_path`
 
@@ -194,7 +193,7 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 - [ ] Contrainte d'exclusion contre les chevauchements (`btree_gist`, `tstzrange`)
 - [ ] Cohérence `is_current` = (`valid_to` = `9999-12-31`)
 - [ ] Fonction ou requête de recherche de la version utilisateur valide à `requested_at`
-- [ ] Ligne `landmark_key = -1`
+- [ ] Pas de ligne `-1` dans `dim_landmark` : un fait sans monument a `landmark_key` NULL
 
 **Critères d'acceptation**
 - [ ] Au plus une version courante par utilisateur, aucun chevauchement
@@ -209,7 +208,7 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 - [ ] Supprimer les insertions dans `fact_itinerary`
 - [ ] Insérer d'abord `dim_itinerary` (clés explicites), puis `fact_calorie_burn`
 - [ ] Conserver utilisateurs synthétiques, recettes, restaurants et monuments d'exemple
-- [ ] `landmark_key = -1` sans monument
+- [ ] `landmark_key` NULL pour les demandes sans monument
 - [ ] `dim_date` couvrant toutes les dates du sample
 
 **Critères d'acceptation**
@@ -238,7 +237,8 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 - [ ] PK, FK, `CHECK`
 - [ ] Index sur toutes les FK, sur `requested_at` et `date_key`
 - [ ] Index GiST sur les colonnes `geography` (dimensions et `dim_itinerary`)
-- [ ] `CHECK` sur `insee_code` (69381–69389, hors `-1`)
+- [ ] `CHECK` sur `insee_code` : les 58 codes de la Métropole de Lyon (liste de `processing_landmarks.py`)
+- [ ] Aligner les `CHECK` de bounding box avec les scripts (lat 45.4–46.1, lon 4.5–5.3)
 - [ ] Clé d'unicité d'idempotence sur le fait (par exemple `user_key`, `recipe_key`, `restaurant_key`, `activity_key`, `requested_at`)
 
 **Critères d'acceptation**
@@ -297,7 +297,7 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 
 **À faire** (`tests/quality/`)
 - [ ] Nulls, unicité, plages numériques, coordonnées, clés étrangères
-- [ ] Présence de la ligne `-1` dans `dim_landmark`
+- [ ] Faits sans monument : `landmark_key` NULL, aucune valeur orpheline
 - [ ] Cohérence des dates et des versions SCD2
 - [ ] Contrôles croisés : `distance_km` cohérent avec `ST_Distance(start_point, end_point)`, `end_point` cohérent avec `landmark_key`
 - [ ] Le pipeline échoue si un contrôle critique échoue
@@ -376,7 +376,7 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 
 **À faire**
 - [ ] `docs/data_quality_rules.md` : pour chaque règle, la condition, l'action (rejet, normalisation, échec du pipeline), la table concernée
-- [ ] Couvrir nettoyage, validation, intégration (clés, SCD, ligne `-1`)
+- [ ] Couvrir nettoyage, validation, intégration (clés, SCD, `landmark_key` NULL quand il n'y a pas de monument)
 - [ ] Demander à @kaguir et @Marti820 de compléter leurs parties
 
 **Critères d'acceptation**

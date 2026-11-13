@@ -1,3 +1,4 @@
+#processing landmarks
 import os
 from collections import Counter
 
@@ -11,9 +12,6 @@ output_path = PROCESSED_DIR / "p_landmarks.csv"
 rejected_path = PROCESSED_DIR / "p_landmarks_rejected.csv"
 temp_output = output_path.with_name(output_path.name + ".tmp")
 temp_rejected = rejected_path.with_name(rejected_path.name + ".tmp")
-
-# Value written in the source_id column for every landmark of this source
-SOURCE_ID = "monuments_historiques"
 
 # INSEE codes of the communes kept (study scope: Métropole de Lyon)
 lyon_codes = {
@@ -34,6 +32,9 @@ lyon_codes = {
 # Loose bounding box around the Métropole: it only catches wrong or swapped coordinates
 LAT_MIN, LAT_MAX = 45.4, 46.1
 LON_MIN, LON_MAX = 4.5, 5.3
+
+# source_id (from staging) is the Merimee reference: "PA" followed by digits, e.g. PA00117123
+REFERENCE_PATTERN = r"^PA(\d+)$"
 
 # Coordinates are stored as one text cell "lat, lon"
 COORDINATES_PATTERN = r"^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$"
@@ -61,7 +62,9 @@ in_bbox = (
 rules = [
     ("missing_insee_code", df["insee_code"].isna()),
     ("outside_lyon_scope", ~df["insee_code"].isin(lyon_codes)),
-    ("missing_id", df["landmark_key"].isna()),
+    ("missing_id", df["source_id"].isna()),
+    ("missing_name", df["building_name"].isna()),
+    ("invalid_id", df["source_id"].notna() & ~df["source_id"].str.match(REFERENCE_PATTERN, na=True)),
     ("missing_coordinates", df["coordinates"].isna()),
     ("invalid_coordinates", df["coordinates"].notna() & df["lat"].isna()),
     ("outside_bounding_box", df["lat"].notna() & ~in_bbox),
@@ -72,14 +75,13 @@ for reason, condition in rules:
 
 # Duplicates are searched among valid rows only; the first occurrence is kept
 valid = df["reject_reason"].isna()
-is_duplicate = df["landmark_key"].where(valid).duplicated() & valid
+is_duplicate = df["source_id"].where(valid).duplicated() & valid
 df.loc[is_duplicate, "reject_reason"] = "duplicate_id"
 
 kept = df[df["reject_reason"].isna()].drop(columns=["reject_reason", "coordinates"]).copy()
 rejected = df[df["reject_reason"].notna()].drop(columns=["lat", "lon"])
 
-kept.insert(1, "source_id", SOURCE_ID)
-kept = kept[["landmark_key", "source_id", "commune", "insee_code", "building_name",
+kept = kept[["source_id", "commune", "insee_code", "building_name",
              "lat", "lon", "address"]]
 
 # Write to temporary files, then replace the previous ones (a rerun gives the same result)

@@ -1,261 +1,261 @@
-landmark_key,source_id,commune,insee_code,building_name,lat,lon,address
-PA00117734,monuments_historiques,Charly,69046,château,45.64739397,4.795325291,
-PA00117799,monuments_historiques,Lyon,69123,église,45.75601921,4.820422198,"39, 41 rue des Farges"
-PA00117834,monuments_historiques,Lyon,69123,immeuble,45.75770458,4.834312989,15 place Bellecour ; 2 rue de la Barre
-PA00117846,monuments_historiques,Lyon,69123,immeuble,45.75662775,4.831304336,place Bellecour ; 4 rue Victor-Hugo
-PA00117866,monuments_historiques,Lyon,69123,immeuble,45.75826007,4.834252659,place Le-Viste ; 68 rue de la République
-PA00117874,monuments_historiques,Lyon,69123,immeuble,45.76125531,4.826988182,70 rue Saint-Jean
-PA00117976,monuments_historiques,Lyon,69123,site archéologique,45.76063725,4.821349559,à l'angle Ouest de la rue Cléberg ; montée de Fourvière
-PA00118037,monuments_historiques,Saint-Genis-Laval,69204,maison,45.69838988,4.795186525,45 avenue Georges-Clemenceau
-PA00117819,monuments_historiques,Lyon,69123,hôtel,45.75649946,4.831955881,2 rue Auguste-Comte ; place Bellecour
-PA00117839,monuments_historiques,Lyon,69123,immeuble,45.75620852,4.833105067,20 place Bellecour
-PA00117847,monuments_historiques,Lyon,69123,immeuble,45.75678145,4.830953858,26 place Bellecour
-PA00117850,monuments_historiques,Lyon,69123,immeuble,45.75705042,4.829677288,30 place Bellecour
-PA00117852,monuments_historiques,Lyon,69123,immeuble,45.7571255,4.829457772,31 place Bellecour
-PA00117939,monuments_historiques,Lyon,69123,maison,45.76362423,4.827979422,16 rue Saint-Jean
-PA00118032,monuments_historiques,Sainte-Foy-lès-Lyon,69202,maison,45.73778709,4.800947544,50 rue Joseph-Ricard
-PA00118053,monuments_historiques,Saint-Priest,69290,château,45.69671193,4.943932553,
-PA00118105,monuments_historiques,Dardilly,69072,relais de télécommunication,45.80988427,4.734406862,
-PA00118153,monuments_historiques,Lyon 07,69123,garage,45.7512029,4.840314642,35 rue de Marseille
-PA00117792,monuments_historiques,Lyon,69123,site archéologique,45.75715575,4.819998248,1 place des Minimes
-PA00117886,monuments_historiques,Lyon,69123,maison,45.76297962,4.826646097,16 rue du Boeuf
-PA00117887,monuments_historiques,Lyon,69123,maison,45.76240199,4.82689762,19 rue du Boeuf
-PA00117935,monuments_historiques,Lyon,69123,maison,45.76398076,4.828563144,9 rue Saint-Jean
-PA00118151,monuments_historiques,Villeurbanne,69266,maison,45.76163369,4.873862878,40 rue du Quatre-Septembre ; 22 avenue Marc-Sangnier
-PA00117752,monuments_historiques,Couzon-au-Mont-d'Or,69068,église,45.84563245,4.829046367,
-PA00117825,monuments_historiques,Lyon,69123,immeuble,45.75874861,4.831571179,4 place Bellecour
-PA00117843,monuments_historiques,Lyon,69123,immeuble,45.75651715,4.832428191,24 place Bellecour
-PA00117853,monuments_historiques,Lyon,69123,immeuble,45.75743248,4.829372379,place Bellecour ; 7 rue Alphonse-Fochier
-PA00117929,monuments_historiques,Lyon,69123,maison,45.76416886,4.828407471,3 rue Saint-Jean
-PA00117781,monuments_historiques,Lyon,69123,amphithéâtre,45.77049302,4.830272715,rue des Tables-Claudiennes ; rue Terme-Croix-Rousse ; Burdeau
-PA00117845,monuments_historiques,Lyon,69123,immeuble,45.75664273,4.831692666,25 place Bellecour
-PA00117936,monuments_historiques,Lyon,69123,maison,45.76391033,4.828333174,11 rue Saint-Jean ; 9 quai Romain-Rolland
-PA00117959,monuments_historiques,Lyon,69123,maison,45.76226774,4.827400866,48 rue Saint-Jean
-PA00117971,monuments_historiques,Lyon,69123,maison,45.76293074,4.828571411,9 rue des Trois-Maries
-PA00117840,monuments_historiques,Lyon,69123,immeuble,45.75642775,4.832842701,21 place Bellecour
-PA00117861,monuments_historiques,Lyon,69123,immeuble,45.75676371,4.83061729,3 rue Boissac
-PA00117904,monuments_historiques,Lyon,69123,maison,45.76402787,4.827926305,4 rue de la Fronde
-PA00117958,monuments_historiques,Lyon,69123,maison,45.76235745,4.827135083,46 rue Saint-Jean
-PA00117980,monuments_historiques,Lyon,69123,palais de justice,45.76188521,4.82812103,1 rue du Palais-de-Justice ; rue Saint-Jean ; rue de la Bombarde ; place Paul-Duquaire
-PA00118030,monuments_historiques,Saint-Didier-au-Mont-d'Or,69194,immeuble,45.81914601,4.79265197,
-PA00117969,monuments_historiques,Lyon,69123,maison,45.76311066,4.82852862,3 rue des Trois-Maries
-PA00117810,monuments_historiques,Lyon 07,69123,abattoir;marché couvert,45.72988519,4.825012644,236 rue Marcel-Mérieux ; anciennement rue des Culattes
-PA00117849,monuments_historiques,Lyon,69123,immeuble,45.75689237,4.830191918,28 place Bellecour
-PA00117867,monuments_historiques,Lyon,69123,immeuble,45.7580475,4.834750088,4 place Le-Viste
-PA00117873,monuments_historiques,Lyon,69123,immeuble,45.76125785,4.826668988,3 à 8 place Saint-Jean
-PA00117891,monuments_historiques,Lyon,69123,maison,45.76214215,4.826517728,29 rue du Boeuf
-PA00117907,monuments_historiques,Lyon,69123,maison,45.76439611,4.827619375,6 rue de Gadagne
-PA00117931,monuments_historiques,Lyon,69123,maison,45.76411117,4.828374167,5 rue Saint-Jean
-PA00117729,monuments_historiques,Caluire-et-Cuire,69034,maison,45.795195,4.830498558,17 montée des Forts
-PA00117871,monuments_historiques,Lyon,69123,immeuble,45.76250116,4.832255218,27 quai Saint-Antoine ; 58 rue Mercière
-PA00117942,monuments_historiques,Lyon,69123,maison,45.76324149,4.827851173,24 rue Saint-Jean
-PA00117947,monuments_historiques,Lyon,69123,maison,45.76303375,4.827688532,30 rue Saint-Jean
-PA00117961,monuments_historiques,Lyon,69123,maison,45.7621741,4.827293528,52 rue Saint-Jean
-PA00117760,monuments_historiques,Ecully,69081,manoir,45.77358469,4.771389156,chemin de Grandvaux
-PA00117769,monuments_historiques,Irigny,69100,croix de chemin,45.66498515,4.825973607,
-PA00117806,monuments_historiques,Lyon,69123,égout,45.76129128,4.82128789,rue Roger-Radisson ; 3 place de Fourvière
-PA00117826,monuments_historiques,Lyon,69123,immeuble,45.75869175,4.831783879,5 place Bellecour
-PA00117827,monuments_historiques,Lyon,69123,immeuble,45.75862713,4.832032446,6 place Bellecour
-PA00117835,monuments_historiques,Lyon,69123,immeuble,45.75751905,4.834179454,16 place Bellecour
-PA00118054,monuments_historiques,Saint-Romain-au-Mont-d'Or,69233,église,45.83706769,4.822941455,
-PA00117728,monuments_historiques,Caluire-et-Cuire,69034,maison,45.79703636,4.842408709,1 rue Jean-Moulin
-PA00117814,monuments_historiques,Lyon,69123,hôpital,45.77163225,4.835819684,montée Saint-Sébastien
-PA00117833,monuments_historiques,Lyon,69123,immeuble,45.75827419,4.833749758,12 place Bellecour ; 106 rue Président-Edouard-Herriot
-PA00117836,monuments_historiques,Lyon,69123,immeuble,45.7573219,4.83406494,17 place Bellecour
-PA00117863,monuments_historiques,Lyon,69123,immeuble,45.7642626,4.828408751,3 place du Change
-PA00117899,monuments_historiques,Lyon,69123,maison,45.76192712,4.826572069,14 rue de la Bombarde
-PA00117903,monuments_historiques,Lyon,69123,maison,45.76404672,4.828132596,2 rue de la Fronde
-PA00117951,monuments_historiques,Lyon,69123,maison,45.76286758,4.827695102,34 rue Saint-Jean
-PA00118019,monuments_historiques,Quincieux,69163,église,45.90894518,4.758939009,
-PA00118133,monuments_historiques,Dardilly,69072,manoir,45.81876514,4.7563232,
-PA00118149,monuments_historiques,Saint-Romain-au-Mont-d'Or,69233,aqueduc,45.83007832,4.812524402,
-PA00117704,monuments_historiques,Albigny-sur-Saône,69003,demeure,45.86410881,4.832115204,
-PA00117758,monuments_historiques,Ecully,69081,édicule à fonction non identifiée,45.76991114,4.780772547,
-PA00117905,monuments_historiques,Lyon,69123,maison,45.76400177,4.827769607,6 rue de la Fronde
-PA00117908,monuments_historiques,Lyon,69123,maison,45.76409098,4.827793828,7 rue de Gadagne
-PA00117954,monuments_historiques,Lyon,69123,maison,45.76268712,4.827525259,40 rue Saint-Jean
-PA00118000,monuments_historiques,Montanay,69284,église,45.88150214,4.864415025,
-PA00117755,monuments_historiques,Décines-Charpieu,69275,menhir,45.76831991,4.938254379,
-PA00117768,monuments_historiques,Irigny,69100,château,45.67430811,4.829689905,
-PA00117786,monuments_historiques,Lyon,69123,château;maison forte,45.74461139,4.852622508,37 rue du Repos
-PA00117802,monuments_historiques,Lyon,69123,église,45.76663835,4.827131969,rue Saint-Paul ; place Gerson
-PA00117808,monuments_historiques,Lyon,69123,fontaine,45.75576617,4.816550897,rue des Macchabées
-PA00117822,monuments_historiques,Lyon,69123,immeuble,45.75892757,4.830940081,1 place Bellecour
-PA00117910,monuments_historiques,Lyon,69123,maison,45.76382964,4.82855743,2 place du Gouvernement
-PA00117932,monuments_historiques,Lyon,69123,maison,45.76393149,4.828060302,6 rue Saint-Jean
-PA00117978,monuments_historiques,Lyon,69123,palais épiscopal,45.76012698,4.827813973,avenue Adolphe-Max
-PA00118087,monuments_historiques,Vernaison,69260,demeure,45.65104154,4.801446436,
-PA00118132,monuments_historiques,Couzon-au-Mont-d'Or,69068,château,45.84455215,4.824544042,44 rue Rochon ; 1 rue Valesque
-PA00117703,monuments_historiques,Albigny-sur-Saône,69003,château,45.86655425,4.830734484,
-PA00117815,monuments_historiques,Lyon,69123,hôtel,45.75389195,4.831293132,30 rue Sainte-Hélène
-PA00118033,monuments_historiques,Sainte-Foy-lès-Lyon,69202,station de télégraphe,45.73505251,4.802191468,montée de la Chapelle
-PA00117812,monuments_historiques,Lyon,69123,palais épiscopal,45.76109618,4.82778837,
-PA00117824,monuments_historiques,Lyon,69123,immeuble,45.75880986,4.831362335,3 place Bellecour
-PA00117854,monuments_historiques,Lyon,69123,immeuble,45.75775104,4.829819889,place Bellecour ; 4 rue Paul-Lintier
-PA00117856,monuments_historiques,Lyon,69123,immeuble,45.75815942,4.830182228,34 place Bellecour
-PA00117889,monuments_historiques,Lyon,69123,maison,45.7623365,4.826739884,23 rue du Boeuf
-PA00117938,monuments_historiques,Lyon,69123,maison,45.76343387,4.82814358,15 rue Saint-Jean
-PA00117988,monuments_historiques,Lyon,69123,temple antique,45.75959281,4.818625284,
-PA00118055,monuments_historiques,Saint-Romain-au-Mont-d'Or,69233,manoir,45.83655866,4.822741231,
-PA00118138,monuments_historiques,Lyon,69123,maison,45.79705639,4.826932505,7 rue de la Mignonne
-PA00117968,monuments_historiques,Lyon,69123,maison,45.76318139,4.828561469,1 rue des Trois-Maries
-PA00118102,monuments_historiques,Caluire-et-Cuire,69034,maison,45.79938537,4.846229429,place Gouailhardou
-PA00117754,monuments_historiques,Curis-au-Mont-d'Or,69071,château,45.86336136,4.815828553,
-PA00117818,monuments_historiques,Lyon,69123,hôtel,45.75352592,4.831651948,30 rue de la Charité
-PA00117857,monuments_historiques,Lyon,69123,immeuble,45.75833236,4.830290936,35 place Bellecour
-PA00117885,monuments_historiques,Lyon,69123,maison,45.76309045,4.827503904,5 rue du Boeuf
-PA00117892,monuments_historiques,Lyon,69123,maison,45.76202923,4.826341667,31 rue du Boeuf
-PA00117916,monuments_historiques,Lyon,69123,maison,45.76113925,4.827422484,6 rue Mandelot
-PA00117848,monuments_historiques,Lyon,69123,immeuble,45.75670566,4.830412098,27 place Bellecour
-PA00117870,monuments_historiques,Lyon,69123,immeuble,45.76430714,4.834722716,13 rue de la Poulaillerie
-PA00117922,monuments_historiques,Lyon,69123,maison,45.76716812,4.826373487,110 quai Pierre-Scize
-PA00117944,monuments_historiques,Lyon,69123,maison,45.7627348,4.827899471,27 rue Saint-Jean
-PA00117979,monuments_historiques,Lyon,69123,bourse de commerce,45.76398487,4.836356532,place des Cordeliers ; place de la Bourse ; 20 rue de la Bourse ; rue de la République
-PA00118120,monuments_historiques,Lyon,69123,fontaine,45.76762872,4.833454025,place des Terreaux
-PA00117807,monuments_historiques,Lyon,69123,fontaine,45.76853064,4.842061859,place du Maréchal-Lyautey
-PA00117828,monuments_historiques,Lyon,69123,immeuble,45.75856373,4.832322638,7 place Bellecour
-PA00117860,monuments_historiques,Lyon,69123,immeuble,45.75899686,4.830679109,3 rue Bellecour
-PA00117952,monuments_historiques,Lyon,69123,maison,45.76277999,4.827497423,36 rue Saint-Jean
-PA00117962,monuments_historiques,Lyon,69123,maison,45.76197088,4.8270631,60 rue Saint-Jean
-PA00117963,monuments_historiques,Lyon,69123,maison,45.76183613,4.8272248,62 rue Saint-Jean
-PA00117972,monuments_historiques,Lyon,69123,maison,45.76257559,4.828435955,17 rue des Trois-Maries
-PA00117973,monuments_historiques,Lyon,69123,maison,45.76249241,4.828397735,19 rue des Trois-Maries
-PA00117974,monuments_historiques,Lyon,69123,maison,45.76240544,4.828362433,21 rue des Trois-Maries
-PA00118035,monuments_historiques,Saint-Genis-Laval,69204,château,45.68655425,4.798023642,
-PA00118134,monuments_historiques,Lyon,69123,église,45.79739942,4.833515057,
-PA00117823,monuments_historiques,Lyon,69123,immeuble,45.75886419,4.831148438,2 place Bellecour
-PA00117859,monuments_historiques,Lyon,69123,immeuble,45.75872952,4.83051768,37 place Bellecour
-PA00117937,monuments_historiques,Lyon,69123,maison,45.76348473,4.828201269,13 rue Saint-Jean
-PA00117948,monuments_historiques,Lyon,69123,maison,45.76259708,4.827852645,31 rue Saint-Jean
-PA00118124,monuments_historiques,Lyon,69123,immeuble,45.77041312,4.837485661,"13 quai Lassagne ; 25, 27 rue Royale ; 1 rue Violi"
-PA00117949,monuments_historiques,Lyon,69123,maison,45.76296516,4.827807228,32 rue Saint-Jean
-PA00117956,monuments_historiques,Lyon,69123,maison,45.76251278,4.827241668,42 rue Saint-Jean
-PA00117977,monuments_historiques,Lyon,69123,site archéologique,45.76034626,4.822181887,rue Cléberg
-PA00117793,monuments_historiques,Lyon,69123,site archéologique,45.76111936,4.816554836,
-PA00117794,monuments_historiques,Lyon,69123,église,45.76305368,4.836963147,
-PA00117946,monuments_historiques,Lyon,69123,maison,45.76266807,4.827828675,29 rue Saint-Jean
-PA00117960,monuments_historiques,Lyon,69123,maison,45.76221866,4.827369752,50 rue Saint-Jean
-PA00117983,monuments_historiques,Lyon,69123,préfecture,45.76076673,4.843221131,29 cours de la Liberté ; 106 rue Pierre-Corneille
-PA00117987,monuments_historiques,Lyon,69123,synagogue,45.75703578,4.82789699,13 quai Tilsitt
-PA00117790,monuments_historiques,Lyon,69123,couvent,45.77147911,4.827764495,
-PA00117804,monuments_historiques,Lyon,69123,église,45.77014321,4.833775621,25 rue René-Leynaud
-PA00117830,monuments_historiques,Lyon,69123,immeuble,45.75846363,4.83311579,9 place Bellecour ; 20 rue Gasparin
-PA00117919,monuments_historiques,Lyon,69123,maison,45.76261955,4.827199611,2 place Neuve-Saint-Jean
-PA00118122,monuments_historiques,Lyon,69123,immeuble,45.77220832,4.837731441,3 quai Lassagne ; 2 rue de Provence ; 5 rue Royale
-PA00118150,monuments_historiques,Villeurbanne,69266,hôtel de ville,45.76652028,4.879606714,avenue Aristide-Briand ; place de la Libération ; 33 rue Michel-Servet ; 28 rue Paul-Verlaine
-PA00117763,monuments_historiques,Francheville,69089,château,45.73651579,4.770245401,
-PA00117832,monuments_historiques,Lyon,69123,immeuble,45.75822542,4.833479148,11 place Bellecour
-PA00117858,monuments_historiques,Lyon,69123,immeuble,45.75853404,4.830403141,36 place Bellecour
-PA00117864,monuments_historiques,Lyon,69123,immeuble,45.76526264,4.827308014,10 rue Juiverie
-PA00117883,monuments_historiques,Lyon,69123,maison,45.76326161,4.828845294,1 rue de la Baleine
-PA00117890,monuments_historiques,Lyon,69123,maison,45.76231665,4.826666864,25 rue du Boeuf
-PA00117909,monuments_historiques,Lyon,69123,maison,45.76387025,4.828342588,1 place du Gouvernement
-PA00118136,monuments_historiques,Lyon,69123,hôtel,45.75256112,4.830911724,46 rue de la Charité
-PA00118152,monuments_historiques,Lyon,69123,fontaine,45.76051068,4.833537724,place des Jacobins
-PA00117736,monuments_historiques,Charly,69046,demeure,45.64680673,4.798453601,rue de l'Eglise
-PA00117785,monuments_historiques,Lyon,69123,cathédrale,45.76071437,4.827383465,
-PA00117800,monuments_historiques,Lyon,69123,église,45.75368633,4.827348503,
-PA00117803,monuments_historiques,Lyon,69123,église,45.76625287,4.833071133,
-PA00117821,monuments_historiques,Lyon,69123,hôtel-Dieu;hôpital,45.75869643,4.836476313,rue de l'Hôpital
-PA00117917,monuments_historiques,Lyon,69123,maison,45.76191207,4.832734041,68 rue Mercière ; à l'angle de la rue de la Monnaie
-PA00117940,monuments_historiques,Lyon,69123,maison,45.76356702,4.827982579,18 rue Saint-Jean
-PA00117779,monuments_historiques,Limonest,69116,château,45.83928384,4.779487386,
-PA00117795,monuments_historiques,Lyon,69123,église,45.77107605,4.822376931,
-PA00117816,monuments_historiques,Lyon,69123,hôtel;musée,45.76409027,4.827616554,"10, 12, 14 rue Gadagne"
-PA00117868,monuments_historiques,Lyon,69123,immeuble,45.75789237,4.834832152,place Le-Viste ; 1 rue de la Barre
-PA00117930,monuments_historiques,Lyon,69123,maison,45.76410494,4.827963402,4 rue Saint-Jean
-PA00117967,monuments_historiques,Lyon,69123,maison,45.76428546,4.827870304,3 rue Soufflot
-PA00118034,monuments_historiques,Saint-Genis-Laval,69204,château,45.693039,4.787604991,
-PA00118088,monuments_historiques,Vernaison,69260,maison,45.63986253,4.80745918,
-PA00117797,monuments_historiques,Lyon,69123,église,45.75767765,4.825372053,place François-Bertras
-PA00117876,monuments_historiques,Lyon,69123,immeuble,45.7696241,4.815070372,6 quai Saint-Vincent
-PA00117926,monuments_historiques,Lyon,69123,maison,45.75890751,4.825185993,"10, 12 rue Saint-Georges"
-PA00117964,monuments_historiques,Lyon,69123,maison,45.76176672,4.827262662,64 rue Saint-Jean
-PA00118086,monuments_historiques,Vernaison,69260,demeure,45.65098926,4.803134104,
-PA00118110,monuments_historiques,Lyon,69123,maison,45.76659417,4.80569065,55 rue Sergent-Michel-Berthet
-PA00118154,monuments_historiques,Lyon,69123,studio de cinéma,45.77044914,4.810959655,21 rue du Premier-Film
-PA00117829,monuments_historiques,Lyon,69123,immeuble,45.75840641,4.832770564,8 place Bellecour ; 17 rue Emile-Zola
-PA00117844,monuments_historiques,Lyon,69123,immeuble,45.75651675,4.832288683,24bis place Bellecour
-PA00117900,monuments_historiques,Lyon,69123,maison,45.76503151,4.828861727,26 quai de Bondy
-PA00117925,monuments_historiques,Lyon,69123,maison,45.76286073,4.82566012,27 montée Saint-Barthélémy
-PA00117945,monuments_historiques,Lyon,69123,maison,45.76311483,4.827652464,28 rue Saint-Jean
-PA00117970,monuments_historiques,Lyon,69123,maison,45.76300772,4.828529137,7 rue des Trois-Maries
-PA00117837,monuments_historiques,Lyon,69123,immeuble,45.75710791,4.833968775,18 place Bellecour
-PA00117877,monuments_historiques,Lyon,69123,immeuble,45.76962354,4.836700503,4 rue de Thou
-PA00117878,monuments_historiques,Lyon,69123,immeuble,45.76933177,4.837257503,19 place Tolozan
-PA00117913,monuments_historiques,Lyon,69123,maison,45.76477506,4.827438107,23 rue Juiverie
-PA00117920,monuments_historiques,Lyon,69123,maison,45.76265897,4.827077745,3 place Neuve-Saint-Jean
-PA00117923,monuments_historiques,Lyon,69123,maison,45.76424402,4.828684184,4 quai Romain-Rolland ; anciennement rue de la Bibliothèque
-PA00117941,monuments_historiques,Lyon,69123,maison,45.76350327,4.827950513,20 rue Saint-Jean
-PA00117955,monuments_historiques,Lyon,69123,maison,45.76120093,4.82721514,41 rue Saint-Jean
-PA00117957,monuments_historiques,Lyon,69123,maison,45.76237465,4.827427174,44 rue Saint-Jean
-PA00117838,monuments_historiques,Lyon,69123,immeuble,45.75694212,4.833847284,19 place Bellecour ; 1 place Antonin-Poncet
-PA00117884,monuments_historiques,Lyon,69123,maison,45.76325784,4.828581444,3 rue de la Baleine
-PA00117888,monuments_historiques,Lyon,69123,maison,45.7623828,4.826793137,21 rue du Boeuf
-PA00117912,monuments_historiques,Lyon,69123,maison,45.76494932,4.827518262,21 rue Juiverie
-PA00117943,monuments_historiques,Lyon,69123,maison,45.76316448,4.827715612,26 rue Saint-Jean
-PA00117965,monuments_historiques,Lyon,69123,maison,45.76172983,4.82720731,66 rue Saint-Jean
-PA00117991,monuments_historiques,Lyon,69123,site archéologique,45.7552323,4.816085421,place de Coulans
-PA00118107,monuments_historiques,Lyon,69123,ensemble d'édifices à cour commune,45.77196139,4.83467168,9 place Colbert ; 14bis montée Saint-Sébastien
-PA00117789,monuments_historiques,Lyon,69123,bourse,45.76904742,4.834547833,7 rue Saint-Polycarpe
-PA00117791,monuments_historiques,Lyon,69123,couvent;école supérieure;conservatoire de musique;école de danse,45.76912583,4.811765955,2 quai Chauveau
-PA00117855,monuments_historiques,Lyon,69123,immeuble,45.75796408,4.829794975,33 place Bellecour ; 3 rue Paul-Lintier
-PA00117897,monuments_historiques,Lyon,69123,maison,45.7618975,4.826700559,10 rue de la Bombarde
-PA00117966,monuments_historiques,Lyon,69123,maison,45.76428303,4.828107934,1 rue Soufflot
-PA00118123,monuments_historiques,Lyon,69123,immeuble,45.77117932,4.837553479,9 quai Lassagne ; 17 rue Royale
-PA00117811,monuments_historiques,Lyon,69123,temple,45.76188814,4.84162224,6 cours de la Liberté ; 3 quai Augagneur
-PA00117841,monuments_historiques,Lyon,69123,immeuble,45.75646636,4.832659782,22 place Bellecour
-PA00117882,monuments_historiques,Lyon,69123,maison,45.76337015,4.828157675,1 place de la Baleine
-PA00117934,monuments_historiques,Lyon,69123,maison,45.763846,4.828074725,8 rue Saint-Jean
-PA00117950,monuments_historiques,Lyon,69123,maison,45.76251354,4.827758877,33 rue Saint-Jean
-PA00117985,monuments_historiques,Lyon,69123,site archéologique,45.7555346,4.817560352,
-PA00118139,monuments_historiques,Lyon,69123,maison,45.79685296,4.826982261,5 rue de la Mignonne
-PA00117759,monuments_historiques,Ecully,69081,maison,45.78014713,4.779045469,2 route de Champagne
-PA00117831,monuments_historiques,Lyon,69123,immeuble,45.75834091,4.833304126,10 place Bellecour ; 29 rue Gasparin
-PA00117918,monuments_historiques,Lyon,69123,maison,45.76251477,4.827449482,1 place Neuve-Saint-Jean
-PA00118012,monuments_historiques,Oullins,69149,immeuble,45.71459465,4.804322075,23 rue Voltaire
-PA00118108,monuments_historiques,Lyon,69123,immeuble,45.76356655,4.828229464,5 place du Gouvernement ; rue Saint-Jean
-PA00117796,monuments_historiques,Lyon,69123,église,45.77968662,4.83183036,rue Hénon
-PA00117842,monuments_historiques,Lyon,69123,immeuble,45.7564816,4.832563698,23 place Bellecour
-PA00117895,monuments_historiques,Lyon,69123,maison,45.76187589,4.826754578,8 rue de la Bombarde
-PA00117927,monuments_historiques,Lyon,69123,maison,45.76422686,4.828366058,1 rue Saint-Jean
-PA00118067,monuments_historiques,Solaize,69296,milliaire,45.64111627,4.837531481,route de Vernaison
-PA00117735,monuments_historiques,Charly,69046,château,45.64478365,4.795055015,
-PA00117820,monuments_historiques,Lyon,69123,hôtel de ville,45.76764357,4.834434734,
-PA00117865,monuments_historiques,Lyon,69123,immeuble,45.75834683,4.83401622,place Le-Viste ; 105 rue Président-Edouard-Herriot
-PA00117924,monuments_historiques,Lyon,69123,maison,45.76433742,4.826562872,"15, 17 montée Saint-Barthélémy"
-PA00117928,monuments_historiques,Lyon,69123,maison,45.76416931,4.8281261,2 rue Saint-Jean
-PA00132824,monuments_historiques,Lyon,69123,immeuble,45.76513731,4.827817111,10 rue Lainerie
-PA69000003,monuments_historiques,Lyon,69123,théâtre,45.75995402,4.831303704,place des Célestins ; rue Gaspard-André ; rue Charles-Dullin
-PA69000011,monuments_historiques,Dardilly,69072,maison,45.80449731,4.753452006,2 chemin du Curé-d'Ars
-PA69000009,monuments_historiques,Saint-Cyr-au-Mont-d'Or,69191,église,45.81453721,4.818062091,7 rue des Ecoles
-PA69000022,monuments_historiques,Mulatière (La),69142,château;parc,45.73854936,4.810818684,"29, 29b quai Jean-Jacques-Rousseau"
-PA69000017,monuments_historiques,Lyon 09,69123,chai;usine de mise en bouteilles,45.78764113,4.811917386,54 rue des Docks ; 26 rue Johannès-Carret
-PA69000018,monuments_historiques,Vénissieux,69259,groupe scolaire,45.69390317,4.889356242,route de Corbas
-PA69000020,monuments_historiques,Neuville-sur-Saône,69143,église,45.87651298,4.839925186,
-PA69000024,monuments_historiques,Saint-Germain-au-Mont-d'Or,69207,maison,45.88148215,4.814777621,29 route de Lyon-L'Orangerie
-PA69000026,monuments_historiques,Vénissieux,69259,église,45.71700869,4.885777254,rue Jeanne-Labourde
-PA69000029,monuments_historiques,Lyon,69123,immeuble,45.75857106,4.829018162,8 rue du Plat ; 4 quai Tilsitt
-PA69000030,monuments_historiques,Lyon,69123,immeuble,45.75832381,4.829166444,10 rue du Plat ; 5 quai Tilsitt
-PA69000037,monuments_historiques,Lyon,69123,église,45.76619165,4.846010915,place Edgar-Quinet
-PA69000039,monuments_historiques,Tassin-la-Demi-Lune,69244,horloge publique,45.76401502,4.781520905,place Vauboin
-PA69000038,monuments_historiques,Saint-Didier-au-Mont-d'Or,69194,château,45.8182487,4.785613053,26 chemin de Méruzin
-PA69000032,monuments_historiques,Sainte-Foy-lès-Lyon,69202,séminaire,45.74218092,4.781933083,6 allée Jean-Paul II
-PA69000040,monuments_historiques,Lyon,69123,prison,45.75041095,4.861797092,4 rue Jeanne-Hachette
-PA69000041,monuments_historiques,Irigny,69100,demeure,45.66638005,4.825860022,70 rue de Selettes ; 56 côte Carmagnac
-PA69000043,monuments_historiques,Lyon,69123,immeuble;tissage,45.7801095,4.835417166,10 rue Richan
-PA69000044,monuments_historiques,Vaulx-en-Velin,69256,usine textile,45.75924569,4.924591794,5-13 avenue du Bataillon
-PA69000051,monuments_historiques,Lyon,69123,hôtel,45.7709836,4.842887198,38-38bis avenue du Maréchal-Foch ; 29 rue Malesherbes
-PA69000050,monuments_historiques,Lyon,69123,hôpital,45.74917583,4.811096245,29 rue Soeur-Bouvier
-PA69000053,monuments_historiques,Lyon 4e arrondissement,69123,maison,45.77568989,4.816216387,25 rue Chazière
-PA69000049,monuments_historiques,Lyon,69123,couvent,45.75858091,4.816520136,21bis-23 rue Roger-Radisson ; 14 montée du Télégraphe
-PA69000054,monuments_historiques,Lyon,69123,monument,45.75783398,4.832192573,
-PA69000056,monuments_historiques,Fontaines-sur-Saône,69088,maison,45.81759018,4.861862691,chemin Vetter
-PA69000058,monuments_historiques,Collonges-au-Mont-d'Or,69063,jardin,45.83160053,4.842142444,chemin de Eperon
-PA69000057,monuments_historiques,Saint-Romain-au-Mont-d'Or,69233,jardin,45.83558719,4.831639947,chemin de Eperon
-PA69000066,monuments_historiques,Dardilly,69072,monument aux morts,45.81014554,4.751324517,
-PA69000074,monuments_historiques,"Bron, Métropole de Lyon",69029,maison,45.72900177,4.890641684,1 boulevard Bollaert
-PA69000079,monuments_historiques,Sainte-Foy-lès-Lyon,69202,église;fortification urbaine,45.73686029,4.805403074,Place Xavier-Ricard
-PA69000080,monuments_historiques,Lyon,69123,édifice du génie civil,45.75023581,4.821928207,Quai Rambaud
-PA69000083,monuments_historiques,Lyon,69123,immeuble,45.73389702,4.863335666,62-64 boulevard des États-Unis ; 1 rue des Serpollières
-PA69000086,monuments_historiques,Givors,69091,église,45.58315389,4.775611916,place de l'église
+source_id,commune,insee_code,building_name,lat,lon,address
+PA00117734,Charly,69046,château,45.64739397,4.795325291,
+PA00117799,Lyon,69123,église,45.75601921,4.820422198,"39, 41 rue des Farges"
+PA00117834,Lyon,69123,immeuble,45.75770458,4.834312989,15 place Bellecour ; 2 rue de la Barre
+PA00117846,Lyon,69123,immeuble,45.75662775,4.831304336,place Bellecour ; 4 rue Victor-Hugo
+PA00117866,Lyon,69123,immeuble,45.75826007,4.834252659,place Le-Viste ; 68 rue de la République
+PA00117874,Lyon,69123,immeuble,45.76125531,4.826988182,70 rue Saint-Jean
+PA00117976,Lyon,69123,site archéologique,45.76063725,4.821349559,à l'angle Ouest de la rue Cléberg ; montée de Fourvière
+PA00118037,Saint-Genis-Laval,69204,maison,45.69838988,4.795186525,45 avenue Georges-Clemenceau
+PA00117819,Lyon,69123,hôtel,45.75649946,4.831955881,2 rue Auguste-Comte ; place Bellecour
+PA00117839,Lyon,69123,immeuble,45.75620852,4.833105067,20 place Bellecour
+PA00117847,Lyon,69123,immeuble,45.75678145,4.830953858,26 place Bellecour
+PA00117850,Lyon,69123,immeuble,45.75705042,4.829677288,30 place Bellecour
+PA00117852,Lyon,69123,immeuble,45.7571255,4.829457772,31 place Bellecour
+PA00117939,Lyon,69123,maison,45.76362423,4.827979422,16 rue Saint-Jean
+PA00118032,Sainte-Foy-lès-Lyon,69202,maison,45.73778709,4.800947544,50 rue Joseph-Ricard
+PA00118053,Saint-Priest,69290,château,45.69671193,4.943932553,
+PA00118105,Dardilly,69072,relais de télécommunication,45.80988427,4.734406862,
+PA00118153,Lyon 07,69123,garage,45.7512029,4.840314642,35 rue de Marseille
+PA00117792,Lyon,69123,site archéologique,45.75715575,4.819998248,1 place des Minimes
+PA00117886,Lyon,69123,maison,45.76297962,4.826646097,16 rue du Boeuf
+PA00117887,Lyon,69123,maison,45.76240199,4.82689762,19 rue du Boeuf
+PA00117935,Lyon,69123,maison,45.76398076,4.828563144,9 rue Saint-Jean
+PA00118151,Villeurbanne,69266,maison,45.76163369,4.873862878,40 rue du Quatre-Septembre ; 22 avenue Marc-Sangnier
+PA00117752,Couzon-au-Mont-d'Or,69068,église,45.84563245,4.829046367,
+PA00117825,Lyon,69123,immeuble,45.75874861,4.831571179,4 place Bellecour
+PA00117843,Lyon,69123,immeuble,45.75651715,4.832428191,24 place Bellecour
+PA00117853,Lyon,69123,immeuble,45.75743248,4.829372379,place Bellecour ; 7 rue Alphonse-Fochier
+PA00117929,Lyon,69123,maison,45.76416886,4.828407471,3 rue Saint-Jean
+PA00117781,Lyon,69123,amphithéâtre,45.77049302,4.830272715,rue des Tables-Claudiennes ; rue Terme-Croix-Rousse ; Burdeau
+PA00117845,Lyon,69123,immeuble,45.75664273,4.831692666,25 place Bellecour
+PA00117936,Lyon,69123,maison,45.76391033,4.828333174,11 rue Saint-Jean ; 9 quai Romain-Rolland
+PA00117959,Lyon,69123,maison,45.76226774,4.827400866,48 rue Saint-Jean
+PA00117971,Lyon,69123,maison,45.76293074,4.828571411,9 rue des Trois-Maries
+PA00117840,Lyon,69123,immeuble,45.75642775,4.832842701,21 place Bellecour
+PA00117861,Lyon,69123,immeuble,45.75676371,4.83061729,3 rue Boissac
+PA00117904,Lyon,69123,maison,45.76402787,4.827926305,4 rue de la Fronde
+PA00117958,Lyon,69123,maison,45.76235745,4.827135083,46 rue Saint-Jean
+PA00117980,Lyon,69123,palais de justice,45.76188521,4.82812103,1 rue du Palais-de-Justice ; rue Saint-Jean ; rue de la Bombarde ; place Paul-Duquaire
+PA00118030,Saint-Didier-au-Mont-d'Or,69194,immeuble,45.81914601,4.79265197,
+PA00117969,Lyon,69123,maison,45.76311066,4.82852862,3 rue des Trois-Maries
+PA00117810,Lyon 07,69123,abattoir;marché couvert,45.72988519,4.825012644,236 rue Marcel-Mérieux ; anciennement rue des Culattes
+PA00117849,Lyon,69123,immeuble,45.75689237,4.830191918,28 place Bellecour
+PA00117867,Lyon,69123,immeuble,45.7580475,4.834750088,4 place Le-Viste
+PA00117873,Lyon,69123,immeuble,45.76125785,4.826668988,3 à 8 place Saint-Jean
+PA00117891,Lyon,69123,maison,45.76214215,4.826517728,29 rue du Boeuf
+PA00117907,Lyon,69123,maison,45.76439611,4.827619375,6 rue de Gadagne
+PA00117931,Lyon,69123,maison,45.76411117,4.828374167,5 rue Saint-Jean
+PA00117729,Caluire-et-Cuire,69034,maison,45.795195,4.830498558,17 montée des Forts
+PA00117871,Lyon,69123,immeuble,45.76250116,4.832255218,27 quai Saint-Antoine ; 58 rue Mercière
+PA00117942,Lyon,69123,maison,45.76324149,4.827851173,24 rue Saint-Jean
+PA00117947,Lyon,69123,maison,45.76303375,4.827688532,30 rue Saint-Jean
+PA00117961,Lyon,69123,maison,45.7621741,4.827293528,52 rue Saint-Jean
+PA00117760,Ecully,69081,manoir,45.77358469,4.771389156,chemin de Grandvaux
+PA00117769,Irigny,69100,croix de chemin,45.66498515,4.825973607,
+PA00117806,Lyon,69123,égout,45.76129128,4.82128789,rue Roger-Radisson ; 3 place de Fourvière
+PA00117826,Lyon,69123,immeuble,45.75869175,4.831783879,5 place Bellecour
+PA00117827,Lyon,69123,immeuble,45.75862713,4.832032446,6 place Bellecour
+PA00117835,Lyon,69123,immeuble,45.75751905,4.834179454,16 place Bellecour
+PA00118054,Saint-Romain-au-Mont-d'Or,69233,église,45.83706769,4.822941455,
+PA00117728,Caluire-et-Cuire,69034,maison,45.79703636,4.842408709,1 rue Jean-Moulin
+PA00117814,Lyon,69123,hôpital,45.77163225,4.835819684,montée Saint-Sébastien
+PA00117833,Lyon,69123,immeuble,45.75827419,4.833749758,12 place Bellecour ; 106 rue Président-Edouard-Herriot
+PA00117836,Lyon,69123,immeuble,45.7573219,4.83406494,17 place Bellecour
+PA00117863,Lyon,69123,immeuble,45.7642626,4.828408751,3 place du Change
+PA00117899,Lyon,69123,maison,45.76192712,4.826572069,14 rue de la Bombarde
+PA00117903,Lyon,69123,maison,45.76404672,4.828132596,2 rue de la Fronde
+PA00117951,Lyon,69123,maison,45.76286758,4.827695102,34 rue Saint-Jean
+PA00118019,Quincieux,69163,église,45.90894518,4.758939009,
+PA00118133,Dardilly,69072,manoir,45.81876514,4.7563232,
+PA00118149,Saint-Romain-au-Mont-d'Or,69233,aqueduc,45.83007832,4.812524402,
+PA00117704,Albigny-sur-Saône,69003,demeure,45.86410881,4.832115204,
+PA00117758,Ecully,69081,édicule à fonction non identifiée,45.76991114,4.780772547,
+PA00117905,Lyon,69123,maison,45.76400177,4.827769607,6 rue de la Fronde
+PA00117908,Lyon,69123,maison,45.76409098,4.827793828,7 rue de Gadagne
+PA00117954,Lyon,69123,maison,45.76268712,4.827525259,40 rue Saint-Jean
+PA00118000,Montanay,69284,église,45.88150214,4.864415025,
+PA00117755,Décines-Charpieu,69275,menhir,45.76831991,4.938254379,
+PA00117768,Irigny,69100,château,45.67430811,4.829689905,
+PA00117786,Lyon,69123,château;maison forte,45.74461139,4.852622508,37 rue du Repos
+PA00117802,Lyon,69123,église,45.76663835,4.827131969,rue Saint-Paul ; place Gerson
+PA00117808,Lyon,69123,fontaine,45.75576617,4.816550897,rue des Macchabées
+PA00117822,Lyon,69123,immeuble,45.75892757,4.830940081,1 place Bellecour
+PA00117910,Lyon,69123,maison,45.76382964,4.82855743,2 place du Gouvernement
+PA00117932,Lyon,69123,maison,45.76393149,4.828060302,6 rue Saint-Jean
+PA00117978,Lyon,69123,palais épiscopal,45.76012698,4.827813973,avenue Adolphe-Max
+PA00118087,Vernaison,69260,demeure,45.65104154,4.801446436,
+PA00118132,Couzon-au-Mont-d'Or,69068,château,45.84455215,4.824544042,44 rue Rochon ; 1 rue Valesque
+PA00117703,Albigny-sur-Saône,69003,château,45.86655425,4.830734484,
+PA00117815,Lyon,69123,hôtel,45.75389195,4.831293132,30 rue Sainte-Hélène
+PA00118033,Sainte-Foy-lès-Lyon,69202,station de télégraphe,45.73505251,4.802191468,montée de la Chapelle
+PA00117812,Lyon,69123,palais épiscopal,45.76109618,4.82778837,
+PA00117824,Lyon,69123,immeuble,45.75880986,4.831362335,3 place Bellecour
+PA00117854,Lyon,69123,immeuble,45.75775104,4.829819889,place Bellecour ; 4 rue Paul-Lintier
+PA00117856,Lyon,69123,immeuble,45.75815942,4.830182228,34 place Bellecour
+PA00117889,Lyon,69123,maison,45.7623365,4.826739884,23 rue du Boeuf
+PA00117938,Lyon,69123,maison,45.76343387,4.82814358,15 rue Saint-Jean
+PA00117988,Lyon,69123,temple antique,45.75959281,4.818625284,
+PA00118055,Saint-Romain-au-Mont-d'Or,69233,manoir,45.83655866,4.822741231,
+PA00118138,Lyon,69123,maison,45.79705639,4.826932505,7 rue de la Mignonne
+PA00117968,Lyon,69123,maison,45.76318139,4.828561469,1 rue des Trois-Maries
+PA00118102,Caluire-et-Cuire,69034,maison,45.79938537,4.846229429,place Gouailhardou
+PA00117754,Curis-au-Mont-d'Or,69071,château,45.86336136,4.815828553,
+PA00117818,Lyon,69123,hôtel,45.75352592,4.831651948,30 rue de la Charité
+PA00117857,Lyon,69123,immeuble,45.75833236,4.830290936,35 place Bellecour
+PA00117885,Lyon,69123,maison,45.76309045,4.827503904,5 rue du Boeuf
+PA00117892,Lyon,69123,maison,45.76202923,4.826341667,31 rue du Boeuf
+PA00117916,Lyon,69123,maison,45.76113925,4.827422484,6 rue Mandelot
+PA00117848,Lyon,69123,immeuble,45.75670566,4.830412098,27 place Bellecour
+PA00117870,Lyon,69123,immeuble,45.76430714,4.834722716,13 rue de la Poulaillerie
+PA00117922,Lyon,69123,maison,45.76716812,4.826373487,110 quai Pierre-Scize
+PA00117944,Lyon,69123,maison,45.7627348,4.827899471,27 rue Saint-Jean
+PA00117979,Lyon,69123,bourse de commerce,45.76398487,4.836356532,place des Cordeliers ; place de la Bourse ; 20 rue de la Bourse ; rue de la République
+PA00118120,Lyon,69123,fontaine,45.76762872,4.833454025,place des Terreaux
+PA00117807,Lyon,69123,fontaine,45.76853064,4.842061859,place du Maréchal-Lyautey
+PA00117828,Lyon,69123,immeuble,45.75856373,4.832322638,7 place Bellecour
+PA00117860,Lyon,69123,immeuble,45.75899686,4.830679109,3 rue Bellecour
+PA00117952,Lyon,69123,maison,45.76277999,4.827497423,36 rue Saint-Jean
+PA00117962,Lyon,69123,maison,45.76197088,4.8270631,60 rue Saint-Jean
+PA00117963,Lyon,69123,maison,45.76183613,4.8272248,62 rue Saint-Jean
+PA00117972,Lyon,69123,maison,45.76257559,4.828435955,17 rue des Trois-Maries
+PA00117973,Lyon,69123,maison,45.76249241,4.828397735,19 rue des Trois-Maries
+PA00117974,Lyon,69123,maison,45.76240544,4.828362433,21 rue des Trois-Maries
+PA00118035,Saint-Genis-Laval,69204,château,45.68655425,4.798023642,
+PA00118134,Lyon,69123,église,45.79739942,4.833515057,
+PA00117823,Lyon,69123,immeuble,45.75886419,4.831148438,2 place Bellecour
+PA00117859,Lyon,69123,immeuble,45.75872952,4.83051768,37 place Bellecour
+PA00117937,Lyon,69123,maison,45.76348473,4.828201269,13 rue Saint-Jean
+PA00117948,Lyon,69123,maison,45.76259708,4.827852645,31 rue Saint-Jean
+PA00118124,Lyon,69123,immeuble,45.77041312,4.837485661,"13 quai Lassagne ; 25, 27 rue Royale ; 1 rue Violi"
+PA00117949,Lyon,69123,maison,45.76296516,4.827807228,32 rue Saint-Jean
+PA00117956,Lyon,69123,maison,45.76251278,4.827241668,42 rue Saint-Jean
+PA00117977,Lyon,69123,site archéologique,45.76034626,4.822181887,rue Cléberg
+PA00117793,Lyon,69123,site archéologique,45.76111936,4.816554836,
+PA00117794,Lyon,69123,église,45.76305368,4.836963147,
+PA00117946,Lyon,69123,maison,45.76266807,4.827828675,29 rue Saint-Jean
+PA00117960,Lyon,69123,maison,45.76221866,4.827369752,50 rue Saint-Jean
+PA00117983,Lyon,69123,préfecture,45.76076673,4.843221131,29 cours de la Liberté ; 106 rue Pierre-Corneille
+PA00117987,Lyon,69123,synagogue,45.75703578,4.82789699,13 quai Tilsitt
+PA00117790,Lyon,69123,couvent,45.77147911,4.827764495,
+PA00117804,Lyon,69123,église,45.77014321,4.833775621,25 rue René-Leynaud
+PA00117830,Lyon,69123,immeuble,45.75846363,4.83311579,9 place Bellecour ; 20 rue Gasparin
+PA00117919,Lyon,69123,maison,45.76261955,4.827199611,2 place Neuve-Saint-Jean
+PA00118122,Lyon,69123,immeuble,45.77220832,4.837731441,3 quai Lassagne ; 2 rue de Provence ; 5 rue Royale
+PA00118150,Villeurbanne,69266,hôtel de ville,45.76652028,4.879606714,avenue Aristide-Briand ; place de la Libération ; 33 rue Michel-Servet ; 28 rue Paul-Verlaine
+PA00117763,Francheville,69089,château,45.73651579,4.770245401,
+PA00117832,Lyon,69123,immeuble,45.75822542,4.833479148,11 place Bellecour
+PA00117858,Lyon,69123,immeuble,45.75853404,4.830403141,36 place Bellecour
+PA00117864,Lyon,69123,immeuble,45.76526264,4.827308014,10 rue Juiverie
+PA00117883,Lyon,69123,maison,45.76326161,4.828845294,1 rue de la Baleine
+PA00117890,Lyon,69123,maison,45.76231665,4.826666864,25 rue du Boeuf
+PA00117909,Lyon,69123,maison,45.76387025,4.828342588,1 place du Gouvernement
+PA00118136,Lyon,69123,hôtel,45.75256112,4.830911724,46 rue de la Charité
+PA00118152,Lyon,69123,fontaine,45.76051068,4.833537724,place des Jacobins
+PA00117736,Charly,69046,demeure,45.64680673,4.798453601,rue de l'Eglise
+PA00117785,Lyon,69123,cathédrale,45.76071437,4.827383465,
+PA00117800,Lyon,69123,église,45.75368633,4.827348503,
+PA00117803,Lyon,69123,église,45.76625287,4.833071133,
+PA00117821,Lyon,69123,hôtel-Dieu;hôpital,45.75869643,4.836476313,rue de l'Hôpital
+PA00117917,Lyon,69123,maison,45.76191207,4.832734041,68 rue Mercière ; à l'angle de la rue de la Monnaie
+PA00117940,Lyon,69123,maison,45.76356702,4.827982579,18 rue Saint-Jean
+PA00117779,Limonest,69116,château,45.83928384,4.779487386,
+PA00117795,Lyon,69123,église,45.77107605,4.822376931,
+PA00117816,Lyon,69123,hôtel;musée,45.76409027,4.827616554,"10, 12, 14 rue Gadagne"
+PA00117868,Lyon,69123,immeuble,45.75789237,4.834832152,place Le-Viste ; 1 rue de la Barre
+PA00117930,Lyon,69123,maison,45.76410494,4.827963402,4 rue Saint-Jean
+PA00117967,Lyon,69123,maison,45.76428546,4.827870304,3 rue Soufflot
+PA00118034,Saint-Genis-Laval,69204,château,45.693039,4.787604991,
+PA00118088,Vernaison,69260,maison,45.63986253,4.80745918,
+PA00117797,Lyon,69123,église,45.75767765,4.825372053,place François-Bertras
+PA00117876,Lyon,69123,immeuble,45.7696241,4.815070372,6 quai Saint-Vincent
+PA00117926,Lyon,69123,maison,45.75890751,4.825185993,"10, 12 rue Saint-Georges"
+PA00117964,Lyon,69123,maison,45.76176672,4.827262662,64 rue Saint-Jean
+PA00118086,Vernaison,69260,demeure,45.65098926,4.803134104,
+PA00118110,Lyon,69123,maison,45.76659417,4.80569065,55 rue Sergent-Michel-Berthet
+PA00118154,Lyon,69123,studio de cinéma,45.77044914,4.810959655,21 rue du Premier-Film
+PA00117829,Lyon,69123,immeuble,45.75840641,4.832770564,8 place Bellecour ; 17 rue Emile-Zola
+PA00117844,Lyon,69123,immeuble,45.75651675,4.832288683,24bis place Bellecour
+PA00117900,Lyon,69123,maison,45.76503151,4.828861727,26 quai de Bondy
+PA00117925,Lyon,69123,maison,45.76286073,4.82566012,27 montée Saint-Barthélémy
+PA00117945,Lyon,69123,maison,45.76311483,4.827652464,28 rue Saint-Jean
+PA00117970,Lyon,69123,maison,45.76300772,4.828529137,7 rue des Trois-Maries
+PA00117837,Lyon,69123,immeuble,45.75710791,4.833968775,18 place Bellecour
+PA00117877,Lyon,69123,immeuble,45.76962354,4.836700503,4 rue de Thou
+PA00117878,Lyon,69123,immeuble,45.76933177,4.837257503,19 place Tolozan
+PA00117913,Lyon,69123,maison,45.76477506,4.827438107,23 rue Juiverie
+PA00117920,Lyon,69123,maison,45.76265897,4.827077745,3 place Neuve-Saint-Jean
+PA00117923,Lyon,69123,maison,45.76424402,4.828684184,4 quai Romain-Rolland ; anciennement rue de la Bibliothèque
+PA00117941,Lyon,69123,maison,45.76350327,4.827950513,20 rue Saint-Jean
+PA00117955,Lyon,69123,maison,45.76120093,4.82721514,41 rue Saint-Jean
+PA00117957,Lyon,69123,maison,45.76237465,4.827427174,44 rue Saint-Jean
+PA00117838,Lyon,69123,immeuble,45.75694212,4.833847284,19 place Bellecour ; 1 place Antonin-Poncet
+PA00117884,Lyon,69123,maison,45.76325784,4.828581444,3 rue de la Baleine
+PA00117888,Lyon,69123,maison,45.7623828,4.826793137,21 rue du Boeuf
+PA00117912,Lyon,69123,maison,45.76494932,4.827518262,21 rue Juiverie
+PA00117943,Lyon,69123,maison,45.76316448,4.827715612,26 rue Saint-Jean
+PA00117965,Lyon,69123,maison,45.76172983,4.82720731,66 rue Saint-Jean
+PA00117991,Lyon,69123,site archéologique,45.7552323,4.816085421,place de Coulans
+PA00118107,Lyon,69123,ensemble d'édifices à cour commune,45.77196139,4.83467168,9 place Colbert ; 14bis montée Saint-Sébastien
+PA00117789,Lyon,69123,bourse,45.76904742,4.834547833,7 rue Saint-Polycarpe
+PA00117791,Lyon,69123,couvent;école supérieure;conservatoire de musique;école de danse,45.76912583,4.811765955,2 quai Chauveau
+PA00117855,Lyon,69123,immeuble,45.75796408,4.829794975,33 place Bellecour ; 3 rue Paul-Lintier
+PA00117897,Lyon,69123,maison,45.7618975,4.826700559,10 rue de la Bombarde
+PA00117966,Lyon,69123,maison,45.76428303,4.828107934,1 rue Soufflot
+PA00118123,Lyon,69123,immeuble,45.77117932,4.837553479,9 quai Lassagne ; 17 rue Royale
+PA00117811,Lyon,69123,temple,45.76188814,4.84162224,6 cours de la Liberté ; 3 quai Augagneur
+PA00117841,Lyon,69123,immeuble,45.75646636,4.832659782,22 place Bellecour
+PA00117882,Lyon,69123,maison,45.76337015,4.828157675,1 place de la Baleine
+PA00117934,Lyon,69123,maison,45.763846,4.828074725,8 rue Saint-Jean
+PA00117950,Lyon,69123,maison,45.76251354,4.827758877,33 rue Saint-Jean
+PA00117985,Lyon,69123,site archéologique,45.7555346,4.817560352,
+PA00118139,Lyon,69123,maison,45.79685296,4.826982261,5 rue de la Mignonne
+PA00117759,Ecully,69081,maison,45.78014713,4.779045469,2 route de Champagne
+PA00117831,Lyon,69123,immeuble,45.75834091,4.833304126,10 place Bellecour ; 29 rue Gasparin
+PA00117918,Lyon,69123,maison,45.76251477,4.827449482,1 place Neuve-Saint-Jean
+PA00118012,Oullins,69149,immeuble,45.71459465,4.804322075,23 rue Voltaire
+PA00118108,Lyon,69123,immeuble,45.76356655,4.828229464,5 place du Gouvernement ; rue Saint-Jean
+PA00117796,Lyon,69123,église,45.77968662,4.83183036,rue Hénon
+PA00117842,Lyon,69123,immeuble,45.7564816,4.832563698,23 place Bellecour
+PA00117895,Lyon,69123,maison,45.76187589,4.826754578,8 rue de la Bombarde
+PA00117927,Lyon,69123,maison,45.76422686,4.828366058,1 rue Saint-Jean
+PA00118067,Solaize,69296,milliaire,45.64111627,4.837531481,route de Vernaison
+PA00117735,Charly,69046,château,45.64478365,4.795055015,
+PA00117820,Lyon,69123,hôtel de ville,45.76764357,4.834434734,
+PA00117865,Lyon,69123,immeuble,45.75834683,4.83401622,place Le-Viste ; 105 rue Président-Edouard-Herriot
+PA00117924,Lyon,69123,maison,45.76433742,4.826562872,"15, 17 montée Saint-Barthélémy"
+PA00117928,Lyon,69123,maison,45.76416931,4.8281261,2 rue Saint-Jean
+PA00132824,Lyon,69123,immeuble,45.76513731,4.827817111,10 rue Lainerie
+PA69000003,Lyon,69123,théâtre,45.75995402,4.831303704,place des Célestins ; rue Gaspard-André ; rue Charles-Dullin
+PA69000011,Dardilly,69072,maison,45.80449731,4.753452006,2 chemin du Curé-d'Ars
+PA69000009,Saint-Cyr-au-Mont-d'Or,69191,église,45.81453721,4.818062091,7 rue des Ecoles
+PA69000022,Mulatière (La),69142,château;parc,45.73854936,4.810818684,"29, 29b quai Jean-Jacques-Rousseau"
+PA69000017,Lyon 09,69123,chai;usine de mise en bouteilles,45.78764113,4.811917386,54 rue des Docks ; 26 rue Johannès-Carret
+PA69000018,Vénissieux,69259,groupe scolaire,45.69390317,4.889356242,route de Corbas
+PA69000020,Neuville-sur-Saône,69143,église,45.87651298,4.839925186,
+PA69000024,Saint-Germain-au-Mont-d'Or,69207,maison,45.88148215,4.814777621,29 route de Lyon-L'Orangerie
+PA69000026,Vénissieux,69259,église,45.71700869,4.885777254,rue Jeanne-Labourde
+PA69000029,Lyon,69123,immeuble,45.75857106,4.829018162,8 rue du Plat ; 4 quai Tilsitt
+PA69000030,Lyon,69123,immeuble,45.75832381,4.829166444,10 rue du Plat ; 5 quai Tilsitt
+PA69000037,Lyon,69123,église,45.76619165,4.846010915,place Edgar-Quinet
+PA69000039,Tassin-la-Demi-Lune,69244,horloge publique,45.76401502,4.781520905,place Vauboin
+PA69000038,Saint-Didier-au-Mont-d'Or,69194,château,45.8182487,4.785613053,26 chemin de Méruzin
+PA69000032,Sainte-Foy-lès-Lyon,69202,séminaire,45.74218092,4.781933083,6 allée Jean-Paul II
+PA69000040,Lyon,69123,prison,45.75041095,4.861797092,4 rue Jeanne-Hachette
+PA69000041,Irigny,69100,demeure,45.66638005,4.825860022,70 rue de Selettes ; 56 côte Carmagnac
+PA69000043,Lyon,69123,immeuble;tissage,45.7801095,4.835417166,10 rue Richan
+PA69000044,Vaulx-en-Velin,69256,usine textile,45.75924569,4.924591794,5-13 avenue du Bataillon
+PA69000051,Lyon,69123,hôtel,45.7709836,4.842887198,38-38bis avenue du Maréchal-Foch ; 29 rue Malesherbes
+PA69000050,Lyon,69123,hôpital,45.74917583,4.811096245,29 rue Soeur-Bouvier
+PA69000053,Lyon 4e arrondissement,69123,maison,45.77568989,4.816216387,25 rue Chazière
+PA69000049,Lyon,69123,couvent,45.75858091,4.816520136,21bis-23 rue Roger-Radisson ; 14 montée du Télégraphe
+PA69000054,Lyon,69123,monument,45.75783398,4.832192573,
+PA69000056,Fontaines-sur-Saône,69088,maison,45.81759018,4.861862691,chemin Vetter
+PA69000058,Collonges-au-Mont-d'Or,69063,jardin,45.83160053,4.842142444,chemin de Eperon
+PA69000057,Saint-Romain-au-Mont-d'Or,69233,jardin,45.83558719,4.831639947,chemin de Eperon
+PA69000066,Dardilly,69072,monument aux morts,45.81014554,4.751324517,
+PA69000074,"Bron, Métropole de Lyon",69029,maison,45.72900177,4.890641684,1 boulevard Bollaert
+PA69000079,Sainte-Foy-lès-Lyon,69202,église;fortification urbaine,45.73686029,4.805403074,Place Xavier-Ricard
+PA69000080,Lyon,69123,édifice du génie civil,45.75023581,4.821928207,Quai Rambaud
+PA69000083,Lyon,69123,immeuble,45.73389702,4.863335666,62-64 boulevard des États-Unis ; 1 rue des Serpollières
+PA69000086,Givors,69091,église,45.58315389,4.775611916,place de l'église
