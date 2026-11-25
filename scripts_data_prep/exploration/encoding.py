@@ -1,3 +1,7 @@
+# Exploration script (one-off profiling), not part of the pipeline.
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # scripts_data_prep/, for config
 from charset_normalizer import from_path
 from config import RAW_DIR
 

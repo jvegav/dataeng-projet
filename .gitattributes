@@ -1,0 +1,8 @@
+# Normalise line endings in the repository (LF), whatever the OS of the person who commits
+* text=auto
+*.sh text eol=lf
+*.sql text eol=lf
+*.jpeg binary
+*.jpg binary
+*.png binary
+*.zip binary

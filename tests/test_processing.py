@@ -88,6 +88,22 @@ def test_met_columns_present(dirs):
     assert set(read_csv(dirs["processed"] / "p_met.csv", nrows=0).columns) == MET_COLUMNS
 
 
+# Minimum number of kept rows per processed file: catches a truncated or almost empty input.
+# Sample thresholds are below the counts of data/sample/ (298 / 23 / 20 / 9 kept rows),
+# real thresholds below the counts of the 25/11/2026 run (496740 / 260 / 3016 / 9).
+MIN_ROWS = {
+    "sample": {"p_recipes.csv": 250, "p_landmarks.csv": 15, "p_restaurants.csv": 15, "p_met.csv": 9},
+    "real": {"p_recipes.csv": 400_000, "p_landmarks.csv": 200, "p_restaurants.csv": 2_500, "p_met.csv": 9},
+}
+
+
+@pytest.mark.parametrize("name", MIN_ROWS["real"])
+def test_minimum_rows(dirs, request, name):
+    minimum = MIN_ROWS[request.config.getoption("--data")][name]
+    rows = len(read_csv(dirs["processed"] / name, usecols=[0]))
+    assert rows >= minimum, f"{name}: {rows} rows, expected at least {minimum}"
+
+
 @pytest.mark.parametrize("name", REQUIRED)
 def test_required_values_present(dirs, name):
     df = processed(dirs, name, usecols=REQUIRED[name])

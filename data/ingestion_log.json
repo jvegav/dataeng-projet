@@ -2,9 +2,9 @@
   "r_recipes.zip": {
     "source": "recipes",
     "file": "r_recipes.zip",
-    "sha256": "b37ab3e4133c447a36427d6429fad1ed6b459a130123257627137716895d544c",
-    "scripts_sha256": "be2a9eb04b1e938aed628e45290a3b9d7403109131af2c43f4b245a9014e3795",
-    "ingested_at": "2026-11-13T19:33:21+00:00",
+    "sha256": "83d1f940ed84a7b501b36f29e8a77515ef7b2e0f4b389aa2b8d28ead2c13aed9",
+    "scripts_sha256": "c6a0b800a97a47121943ce37b1d9e6c12adbd21c7303367c71e069cf84a45045",
+    "ingested_at": "2026-11-25T14:44:09+00:00",
     "rows_read": 507335,
     "rows_kept": 496740,
     "rows_rejected": 10595
@@ -12,19 +12,19 @@
   "r_landmarks.csv": {
     "source": "landmarks",
     "file": "r_landmarks.csv",
-    "sha256": "4361fd1f47821aa7f2a2c1b83ef2a486a938fd4cc848a50da746832fc3d265c6",
-    "scripts_sha256": "1301bba4c2ff17a4bea4e3ddc9f333d830195be881a7641f1ad16fa9f34bff2e",
-    "ingested_at": "2026-11-13T19:19:58+00:00",
-    "rows_read": 46761,
+    "sha256": "bf7d5272e8788738ab428ab36de377f132117a376a4a64f1913f43fbefa36ca1",
+    "scripts_sha256": "4dde5eee5bf487f5a1f1e7cfe13359647956e332c401864ea44c952cf74f60ed",
+    "ingested_at": "2026-11-25T14:44:18+00:00",
+    "rows_read": 46783,
     "rows_kept": 260,
-    "rows_rejected": 46501
+    "rows_rejected": 46523
   },
   "r_restaurant_data_kaggles.csv": {
     "source": "restaurants",
     "file": "r_restaurant_data_kaggles.csv",
     "sha256": "6062d0f3382a08884fa5dba9fc02fc7fedd88e37a2ebfb44867beaebca069bd8",
     "scripts_sha256": "5f31fecb584946d30c06efc15a63b5181f2048d4eb6bd5e5abd16aed0f06df9a",
-    "ingested_at": "2026-11-13T19:20:04+00:00",
+    "ingested_at": "2026-11-25T14:44:22+00:00",
     "rows_read": 3058,
     "rows_kept": 3016,
     "rows_rejected": 42
@@ -34,7 +34,7 @@
     "file": "r_met.csv",
     "sha256": "7160dd4056832b20f13d3c615c5d257ede0542f2c3d84f5bc6be4c20e47c7ff7",
     "scripts_sha256": null,
-    "ingested_at": "2026-11-13T19:20:04+00:00",
+    "ingested_at": "2026-11-25T14:44:22+00:00",
     "rows_read": 9,
     "rows_kept": 9,
     "rows_rejected": 0

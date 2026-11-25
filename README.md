@@ -87,6 +87,21 @@ The architecture diagram also shows an offline sample of a few hundred recipes a
 - **Generated calorie-burning requests:** daily batch.
 - **Landing policy:** original files are preserved unchanged, with ingestion metadata and duplicate-load protection.
 
+### Running the data preparation
+
+Requirements: Python 3.10+ and `pip install pandas pytest`. The scripts only read local files: no network access is needed.
+
+```bash
+# Offline sample (versioned in data/sample/): outputs go to data/sample_run/
+SAMPLE=true python scripts_data_prep/run_pipeline.py      # PowerShell: $env:SAMPLE="true"; python scripts_data_prep/run_pipeline.py
+pytest tests                                              # staging, processing and runner tests on a temporary copy of the sample
+
+# Real data: put the raw files in data/raw/ (see documentation/sources.md), then
+python scripts_data_prep/run_pipeline.py                  # sources with the same SHA-256 as in data/ingestion_log.json are skipped
+pytest tests --data real
+python scripts_data_prep/make_sample.py                   # rebuilds data/sample/ from data/raw/ (fixed seed)
+```
+
 ### Example data-quality checks
 
 The pipeline should fail its quality gate when a required check fails and report the failure explicitly. Examples include:

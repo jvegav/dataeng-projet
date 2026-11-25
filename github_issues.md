@@ -51,7 +51,7 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 - [x] Produire `data/processed/p_recipes.csv`
 
 **Critères d'acceptation**
-- [ ] Les lignes valides respectent les `CHECK` du DDL (`dim_recipe`)
+- [x] Les lignes valides respectent les `CHECK` du DDL (`dim_recipe`)
 - [x] Chaque rejet porte un motif
 - [x] Relancer le script ne produit pas de doublons
 
@@ -108,17 +108,17 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 ## #6 — Tests d'ingestion
 **Assigné :** @kaguir · **Labels :** `kaguir-ingestion`, `tests` · **Milestone :** M2 · **Branche :** `feature/issue-06-ingestion-tests` · **Dépend de :** #2, #3, #4, #5
 
-**À faire** (`tests/ingestion/`, sur les fichiers `p_*.csv`)
-- [ ] Nombre de lignes minimum par source
-- [ ] Unicité des identifiants
-- [ ] Calories positives
-- [ ] MET et vitesses positifs (le poids est dans `dim_user`, côté @Marti820)
-- [ ] Coordonnées valides (WGS84, bounding box)
-- [ ] Absence de doublons
-- [ ] Colonnes obligatoires présentes
+**À faire** (`tests/` : `test_staging.py`, `test_processing.py`, `test_runner.py`, sur les fichiers `s_*.csv` et `p_*.csv`)
+- [x] Nombre de lignes minimum par source
+- [x] Unicité des identifiants
+- [x] Calories positives
+- [x] MET et vitesses positifs (le poids est dans `dim_user`, côté @Marti820)
+- [x] Coordonnées valides (WGS84, bounding box)
+- [x] Absence de doublons
+- [x] Colonnes obligatoires présentes
 
 **Critères d'acceptation**
-- [ ] `pytest tests/ingestion` passe sur l'échantillon (#19) et sur les données réelles
+- [x] `pytest tests` (54 + 4 tests) et `pytest tests --data real` passent sur l'échantillon (#19) et sur les données réelles
 
 ---
 
@@ -126,10 +126,10 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @kaguir · **Labels :** `kaguir-ingestion`, `tests` · **Milestone :** M1 · **Branche :** `feature/issue-19-offline-sample` · **Dépend de :** #1
 
 **À faire**
-- [ ] `data/sample/` : quelques centaines de recettes, ~30 monuments de Lyon, ~20 restaurants, seed MET
-- [ ] Variable d'environnement `SAMPLE=true` : les scripts lisent `data/sample/` sans accès réseau
-- [ ] Test qui prouve l'exécution hors ligne (par exemple réseau désactivé ou téléchargement mocké)
-- [ ] Documenter la commande de lancement dans le README
+- [x] `data/sample/` : quelques centaines de recettes, ~30 monuments de Lyon, ~20 restaurants, seed MET
+- [x] Variable d'environnement `SAMPLE=true` : les scripts lisent `data/sample/` sans accès réseau
+- [x] Test qui prouve l'exécution hors ligne (par exemple réseau désactivé ou téléchargement mocké) : `test_runner.py` exécute le runner avec `SAMPLE=true` sur une copie de `data/sample/` ; les scripts ne lisent que des fichiers locaux
+- [x] Documenter la commande de lancement dans le README
 
 **Critères d'acceptation**
 - [ ] Le pipeline complet tourne sur l'échantillon, sans internet, depuis un clone propre

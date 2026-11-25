@@ -8,9 +8,16 @@ data/staging/*
 !data/staging/s_met.csv
 !data/staging/.gitkeep
 
-# Processed: only landmarks (open licence, ~324 rows) and MET are versioned
+# Processed: only landmarks (open licence, 260 rows) and MET are versioned
 # (this also ignores the rejected-rows files)
 data/processed/*
 !data/processed/p_landmarks.csv
 !data/processed/p_met.csv
 !data/processed/.gitkeep
+# Output of a SAMPLE=true run
+data/sample_run/
+
+# Python caches
+__pycache__/
+*.pyc
+.pytest_cache/

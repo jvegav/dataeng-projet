@@ -1,0 +1,10 @@
+activity_key,activity_name,speed_kmh,met_value,intensity
+17170,Slow Walk,4.02,3.00,1
+17200,Moderate Walk,5.95,4.80,2
+17220,Fast Walk,6.76,5.50,2
+12030,Slow Run,8.20,8.50,3
+12050,Moderate Run,9.90,9.30,3
+12090,Fast Run,12.87,12.00,3
+01020,Leisure Cycling,17.60,6.80,3
+01030,Moderate Cycling,20.84,8.00,3
+01040,Fast Cycling,24.14,10.00,3

@@ -1,0 +1,21 @@
+restaurant_name ,review_number , food_type , ranking , overallRating  , wifi , livraison , average_price , lat , lng , district 
+Arsenic Restaurant,515 avis ,Française  Européenne  Moderne,Nº 70 sur 3 058 Restaurants à Lyon,4.5 ,no,no,no information,45.75843811035156,4.841518878936768,69003  Lyon  
+M Restaurant,344 avis ,Française  Européenne,Nº 92 sur 3 058 Restaurants à Lyon,4.5 ,yes,yes,19 € -35 €,45.769676208496094,4.8437042236328125,69006  Lyon  
+Okawali,167 avis ,Japonaise  Végétariens bienvenus  Choix végétaliens,Nº 5 sur 204 Restaurants à Villeurbanne,4.5 ,yes,yes,8 € -40 €,45.770782470703125,4.86366081237793,69100 Villeurbanne  Lyon  
+Cafe Comptoir Abel,1 280 avis ,Française  Européenne,Nº 206 sur 3 058 Restaurants à Lyon,4.0 ,no,no,19 € -128 €,45.753700256347656,4.825885772705078,69002  Lyon  
+Cafe Lobut,52 avis ,Française,Nº 11 sur 204 Restaurants à Villeurbanne,4.5 ,no,no,no information,45.76380920410156,4.872089862823486,69100 Villeurbanne  Lyon  
+Piada,24 avis ,no information,Nº 588 sur 3 058 Restaurants à Lyon,5.0 ,no,no,8 € -15 €,45.741241455078125,4.815425872802734,69002  Lyon  
+Une Histoire de Gouts,16 avis ,Française,Nº 1 366 sur 3 058 Restaurants à Lyon,4.0 ,no,no,no information,45.744380950927734,4.892519950866699,69003  Lyon  
+Restaurant La Belle Colombe,37 avis ,no information,Nº 67 sur 204 Restaurants à Villeurbanne,3.5 ,no,no,no information,45.770782470703125,4.86366081237793,69100 Villeurbanne  Lyon  
+Le Colorado,45 avis ,Européenne,Nº 78 sur 204 Restaurants à Villeurbanne,3.5 ,no,no,13 € -20 €,45.769779205322266,4.878946781158447,69100 Villeurbanne  Lyon  
+Au Four Et Au Moulin,4 avis ,Pizza  Halal,Nº 10 sur 36 Restaurants à Vaulx en Velin,4.5 ,no,yes,6 € -15 €,45.74763488769531,4.935708045959473,69120 Vaulx en Velin  Lyon  
+Le Napolitain,1 avis ,no information,Nº 2 321 sur 3 058 Restaurants à Lyon,4.0 ,no,no,no information,45.7260856628418,4.840426921844482,69007  Lyon  
+Pizza & Clique,3 avis ,no information,Nº 2 549 sur 3 058 Restaurants à Lyon,2.5 ,no,no,no information,45.77011489868164,4.790435791015625,69009  Lyon  
+Buffalo Grill,94 avis ,Américaine,Nº 2 657 sur 3 058 Restaurants à Lyon,2.5 ,no,no,no information,45.68662643432617,4.9444169998168945,69780  Lyon  
+Pepperoni,100 avis ,Italienne,Nº 2 694 sur 3 058 Restaurants à Lyon,3.5 ,yes,yes,3 € -3 €,45.769676208496094,4.8437042236328125,69006  Lyon  
+LE MONALISA,73 avis ,Italienne,Nº 2 700 sur 3 058 Restaurants à Lyon,2.5 ,no,no,19 € -26 €,45.745933532714844,4.82426118850708,69002  Lyon  
+Flos,no information,no information,no_information,no information,no,no,no information,45.788482666015625,4.814927101135254,69009  Lyon  
+Freshour,no information,no information,no_information,no information,no,no,no information,45.741241455078125,4.815425872802734,69002  Lyon  
+lisayo,no information,no information,no_information,no information,no,no,no information,45.759132385253906,4.823150157928467,69005  Lyon  
+Tradition Space Pizza,no information,no information,no_information,no information,no,no,no information,45.743133544921875,4.870071887969971,69008  Lyon  
+La Panière,no information,Française  Européenne,no_information,no information,no,no,no information,45.733089447021484,4.964011192321777,68650 Chassieu  Lyon  
