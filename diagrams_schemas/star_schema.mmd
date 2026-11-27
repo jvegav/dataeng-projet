@@ -1,97 +1,97 @@
 ---
-title: DeservEat - star schema (dw)
+title: "Grain: one row per dish whose calories are to be burned, for one user at one moment, with one restaurant, one activity, one itinerary and 0..1 landmark"
 ---
 erDiagram
-    DIM_USER ||--o{ FACT_CALORIE_BURN : "version valid at requested_at"
-    DIM_RECIPE ||--o{ FACT_CALORIE_BURN : "dish"
-    DIM_RESTAURANT ||--o{ FACT_CALORIE_BURN : "restaurant"
-    DIM_ACTIVITY ||--o{ FACT_CALORIE_BURN : "activity"
-    DIM_DATE ||--o{ FACT_CALORIE_BURN : "day (Lyon time)"
-    DIM_LANDMARK |o--o{ FACT_CALORIE_BURN : "0..1 landmark (NULL = none)"
-    DIM_ITINERARY ||--|| FACT_CALORIE_BURN : "1:1"
+    dim_itinerary ||--|| fact_calorie_burn : "1:1"
+    dim_user ||--o{ fact_calorie_burn : "version valid at requested_at"
+    dim_date ||--o{ fact_calorie_burn : ""
+    dim_landmark |o--o{ fact_calorie_burn : "0..1"
+    dim_restaurant ||--o{ fact_calorie_burn : ""
+    dim_activity ||--o{ fact_calorie_burn : ""
+    dim_recipe ||--o{ fact_calorie_burn : ""
 
-    FACT_CALORIE_BURN {
-        int calorie_burn_key PK
-        int user_key FK "dim_user"
-        int recipe_key FK "dim_recipe"
-        int restaurant_key FK "dim_restaurant"
-        int activity_key FK "dim_activity"
-        int landmark_key FK "dim_landmark, nullable"
-        int itinerary_key FK,UK "dim_itinerary, 1:1"
-        int date_key FK "dim_date, YYYYMMDD"
-        int kcal_to_burn "one serving, > 0"
-        numeric duration_min "60 x kcal / (MET x kg)"
-        numeric distance_km "speed x duration / 60"
-        timestamptz requested_at
+    fact_calorie_burn {
+        INT calorie_burn_key PK
+        INT recipe_key FK
+        INT activity_key FK
+        INT landmark_key FK "NULL = no landmark"
+        INT user_key FK
+        INT restaurant_key FK
+        INT date_key FK
+        INT itinerary_key FK "UNIQUE (1:1)"
+        INT kcal_to_burn
+        NUMERIC(7,2) distance_km
+        NUMERIC(7,1) duration_min
+        TIMESTAMPTZ requested_at
     }
 
-    DIM_USER {
-        int user_key PK
-        text user_id "business key"
-        numeric weight_kg "30-250"
-        timestamptz valid_from
-        timestamptz valid_to "9999-12-31 if current"
-        boolean is_current
+    dim_itinerary["dim_itinerary (entity)"] {
+        INT itinerary_key PK
+        TEXT start_type "restaurant / user_location"
+        GEOGRAPHY(Point,4326) start_point "user position rounded ~200 m"
+        GEOGRAPHY(Point,4326) end_point "landmark, or start (loop)"
+        JSONB route_steps "NULL for now"
     }
 
-    DIM_RECIPE {
-        int recipe_key PK
-        int source_id UK "recipe_id"
-        text title
-        int kcal_per_serving "1-3000"
-        int servings
-        int total_kcal
-        text category "food.com tags"
-        text ingredients
-        text recipe_url
+    dim_user["dim_user (SCD2)"] {
+        INT user_key PK
+        TEXT user_id
+        NUMERIC(5,1) weight_kg
+        TIMESTAMPTZ valid_from
+        TIMESTAMPTZ valid_to
+        BOOLEAN is_current
     }
 
-    DIM_RESTAURANT {
-        int restaurant_key PK
-        bigint source_id UK "md5(name|lat|lng)"
-        text restaurant_name
-        text food_type
-        double lat
-        double lng
-        geography geom "Point 4326"
-        numeric overall_rating "0-5"
-        text district
+    dim_date["dim_date (static)"] {
+        INT date_key PK
+        DATE full_date
+        INT day_of_week
+        TEXT day_name
+        INT month
+        INT year
+        BOOLEAN is_weekend
     }
 
-    DIM_LANDMARK {
-        int landmark_key PK
-        text source_id UK "Merimee ref"
-        text building_name
-        text address
-        text commune
-        char insee_code "58 Metropole codes"
-        double lat
-        double lon
-        geography geom "Point 4326"
+    dim_landmark["dim_landmark (SCD1)"] {
+        INT landmark_key PK
+        TEXT source_id
+        TEXT building_name
+        TEXT address
+        TEXT commune
+        CHAR(5) insee_code
+        DOUBLE_PRECISION lat
+        DOUBLE_PRECISION lon
+        GEOGRAPHY(Point,4326) geom
     }
 
-    DIM_ACTIVITY {
-        int activity_key PK "Compendium code"
-        text activity_name UK "e.g. Moderate Walk"
-        int intensity "1-3"
-        numeric met_value
-        numeric speed_kmh
+    dim_restaurant["dim_restaurant (SCD1)"] {
+        INT restaurant_key PK
+        BIGINT source_id
+        TEXT restaurant_name
+        TEXT food_type
+        DOUBLE_PRECISION lat
+        DOUBLE_PRECISION lng
+        GEOGRAPHY(Point,4326) geom
+        NUMERIC(3,2) overall_rating
+        TEXT district
     }
 
-    DIM_DATE {
-        int date_key PK "YYYYMMDD"
-        date full_date UK
-        int day_of_week "ISO, 1 = Monday"
-        text day_name
-        int month
-        int year
-        boolean is_weekend
+    dim_activity["dim_activity (static)"] {
+        INT activity_key PK
+        TEXT activity_name
+        INT intensity
+        NUMERIC(4,2) met_value
+        NUMERIC(5,2) speed_kmh
     }
 
-    DIM_ITINERARY {
-        int itinerary_key PK
-        text start_type "restaurant / user_location"
-        geography start_point "user position rounded ~200 m"
-        geography end_point "landmark, or start (loop)"
-        jsonb route_steps "NULL for now"
+    dim_recipe["dim_recipe (SCD1)"] {
+        INT recipe_key PK
+        INT source_id
+        TEXT title
+        INT total_kcal
+        INT kcal_per_serving
+        TEXT category
+        TEXT ingredients
+        TEXT recipe_url
+        INT servings
     }
