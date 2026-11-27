@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeservEat — Deserve what you eat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{cream:'#FAF3EB',terracotta:'#D95D39',charcoal:'#1E1E1E',emerald:'#2E8B57',cocoa:'#8C6B5D'},fontFamily:{sans:['Inter','ui-sans-serif','system-ui']}}}};</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <style>
+    body{background:#FAF3EB;color:#1E1E1E}#map{min-height:620px}.leaflet-container{font-family:Inter,sans-serif;background:#e8e1d8}.leaflet-control-zoom{border:0!important;box-shadow:0 8px 22px #1e1e1e1f!important}.leaflet-control-zoom a{color:#1e1e1e!important;border:0!important}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#fff;border-radius:14px}.leaflet-popup-content{margin:14px 16px;font-family:Inter,sans-serif}.marker-pin{display:grid;place-items:center;width:38px;height:38px;border:3px solid #fff;border-radius:14px 14px 14px 3px;box-shadow:0 5px 14px #1e1e1e38;transform:rotate(-45deg)}.marker-pin span{transform:rotate(45deg);color:#fff}.marker-start{background:#2e8b57;border-radius:999px}.marker-food{background:#d95d39}.marker-landmark{width:30px;height:30px;background:#7866c7;border-radius:999px}.marker-landmark span{font-size:13px}.route-dash{stroke-dasharray:9 10;animation:dash 22s linear infinite}@keyframes dash{to{stroke-dashoffset:-380}}.choice{transition:.2s}.choice:hover{transform:translateY(-2px);box-shadow:0 10px 24px #1e1e1e14}.choice.active{border-color:#d95d39;background:#fff4ef;box-shadow:0 8px 20px #d95d391f}.toggle.active{background:#d95d39;color:#fff;box-shadow:0 5px 12px #d95d393d}@media(max-width:1023px){#map{min-height:470px}}
+  </style>
+</head>
+<body class="font-sans">
+  <main class="mx-auto max-w-[1440px] px-4 py-6 sm:px-8 lg:px-10 lg:py-9">
+    <header class="mb-7 flex flex-col items-center justify-between gap-5 sm:flex-row">
+      <a href="#top" class="flex items-center gap-3"><svg width="49" height="49" viewBox="0 0 49 49" fill="none" aria-label="DeservEat logo"><path d="M8 36C16 36 16 22 27 22C34 22 36 14 41 11" stroke="#2E8B57" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="3 4"/><circle cx="8" cy="36" r="4" fill="#2E8B57"/><path d="M27 5.5c-7.18 0-13 5.82-13 13 0 9.45 13 21 13 21s13-11.55 13-21c0-7.18-5.82-13-13-13Z" fill="#D95D39"/><path d="M28 13.3c-3.6 2.1-5 4.35-4.15 6.75.38 1.07 1.18 1.86 2.4 2.35-1.55 1.3-1.93 3.05-1.12 5.25 3.57-.38 6.22-2.36 6.22-5.34 0-1.76-.89-3.12-2.65-4.08.57-1.47.34-3.11-.7-4.93Z" fill="white"/></svg><div><div class="text-xl font-extrabold tracking-tight">Deserv<span class="text-terracotta">Eat</span></div><div class="text-[11px] font-semibold uppercase tracking-[.22em] text-cocoa">Deserve what you eat</div></div></a>
+      <div class="flex items-center gap-3 text-sm font-semibold text-cocoa"><span class="hidden sm:inline">Lyon · France</span><span class="rounded-full bg-white px-3 py-2 shadow-sm"><i data-lucide="database" class="mr-1 inline h-4 w-4 text-terracotta"></i><span id="data-source">Loading PostgreSQL…</span></span></div>
+    </header>
+    <section id="top" class="mb-7 grid gap-7 lg:grid-cols-[1.35fr_.85fr] lg:items-start">
+      <div class="overflow-hidden rounded-[28px] border border-charcoal/10 bg-white p-2 shadow-[0_20px_60px_rgba(54,38,26,.12)]"><div id="map" class="rounded-[22px]"></div></div>
+      <aside class="space-y-5">
+        <section class="rounded-[28px] border border-charcoal/5 bg-white p-5 shadow-[0_20px_60px_rgba(54,38,26,.08)] sm:p-6"><div class="mb-5 flex items-start justify-between"><div><p class="mb-1 text-xs font-bold uppercase tracking-[.18em] text-terracotta">Live warehouse data</p><h1 class="text-2xl font-extrabold tracking-tight sm:text-3xl">Earn your next bite.</h1></div><div class="rounded-2xl bg-cream p-3 text-terracotta"><i data-lucide="flame" class="h-6 w-6"></i></div></div><label for="food-search" class="mb-2 block text-sm font-bold">Search a recipe or restaurant</label><div class="flex gap-2"><div class="relative flex-1"><i data-lucide="search" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-cocoa"></i><input id="food-search" autocomplete="off" class="h-12 w-full rounded-2xl border-2 border-terracotta/70 bg-cream/50 pl-12 pr-4 text-sm font-semibold outline-none transition focus:border-terracotta focus:ring-4 focus:ring-terracotta/10" placeholder="e.g. Kebab, recipe or restaurant"></div><button id="locate-btn" title="Center on starting point" class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-charcoal text-white transition hover:bg-terracotta"><i data-lucide="crosshair" class="h-5 w-5"></i></button></div><div id="suggestions" class="relative z-20 mt-2 hidden rounded-2xl border border-charcoal/10 bg-white p-2 shadow-xl"></div><p id="search-hint" class="mt-2 text-xs text-cocoa">Start typing to search real recipes in <code>dw.dim_recipe</code>.</p></section>
+        <section class="rounded-[28px] border border-charcoal/5 bg-white p-5 shadow-[0_20px_60px_rgba(54,38,26,.08)] sm:p-6"><label for="restaurant-search" class="mb-2 block text-sm font-bold">Choose a restaurant <span class="font-normal text-cocoa">(optional)</span></label><div class="relative"><i data-lucide="utensils" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-cocoa"></i><input id="restaurant-search" autocomplete="off" class="h-12 w-full rounded-2xl border border-charcoal/15 bg-cream/50 pl-12 pr-4 text-sm font-semibold outline-none transition focus:border-terracotta focus:ring-4 focus:ring-terracotta/10" placeholder="Any restaurant, or leave empty"></div><div id="restaurant-suggestions" class="relative z-20 mt-2 hidden rounded-2xl border border-charcoal/10 bg-white p-2 shadow-xl"></div></section>
+        <section class="rounded-[28px] border border-charcoal/5 bg-white p-5 shadow-[0_20px_60px_rgba(54,38,26,.08)] sm:p-6"><div class="mb-4 flex items-center justify-between"><div><h2 class="font-extrabold">Where do you start?</h2><p class="text-xs text-cocoa">Restaurant is the default; browser location is optional.</p></div><i data-lucide="navigation" class="h-5 w-5 text-cocoa"></i></div><div class="grid grid-cols-2 gap-2 rounded-2xl bg-cream p-1"><button class="start-choice active rounded-xl py-3 text-sm font-bold transition" data-start="restaurant">Restaurant</button><button class="start-choice rounded-xl py-3 text-sm font-bold text-cocoa transition" data-start="current">My location</button></div><p id="location-status" class="mt-2 text-xs text-cocoa">The selected restaurant will be the start point.</p></section>
+        <section class="rounded-[28px] border border-charcoal/5 bg-white p-5 shadow-[0_20px_60px_rgba(54,38,26,.08)] sm:p-6"><div class="mb-4 flex items-center justify-between"><div><h2 class="font-extrabold">Visit a landmark?</h2><p class="text-xs text-cocoa">Add the nearest real landmark to the route.</p></div><i data-lucide="landmark" class="h-5 w-5 text-cocoa"></i></div><div class="grid grid-cols-2 gap-2 rounded-2xl bg-cream p-1"><button class="toggle active rounded-xl py-3 text-sm font-bold transition" data-landmark="yes">Yes</button><button class="toggle rounded-xl py-3 text-sm font-bold text-cocoa transition" data-landmark="no">No</button></div></section>
+        <section class="rounded-[28px] border border-charcoal/5 bg-white p-5 shadow-[0_20px_60px_rgba(54,38,26,.08)] sm:p-6"><div class="mb-4 flex items-center justify-between"><div><h2 class="font-extrabold">Choose your movement</h2><p class="text-xs text-cocoa">Filter by activity from <code>dw.dim_activity</code>.</p></div><i data-lucide="activity" class="h-5 w-5 text-cocoa"></i></div><div class="grid grid-cols-3 gap-2"><button class="choice active rounded-2xl border-2 border-terracotta p-3 text-center" data-activity="walk"><i data-lucide="footprints" class="mx-auto mb-2 h-5 w-5 text-terracotta"></i><span class="block text-xs font-bold">Walk</span></button><button class="choice rounded-2xl border-2 border-transparent bg-cream p-3 text-center" data-activity="cycle"><i data-lucide="bike" class="mx-auto mb-2 h-5 w-5 text-cocoa"></i><span class="block text-xs font-bold">Cycle</span></button><button class="choice rounded-2xl border-2 border-transparent bg-cream p-3 text-center" data-activity="run"><i data-lucide="person-standing" class="mx-auto mb-2 h-5 w-5 text-cocoa"></i><span class="block text-xs font-bold">Run</span></button></div></section>
+        <button id="calculate-btn" class="flex w-full items-center justify-center gap-2 rounded-2xl bg-terracotta px-5 py-4 text-sm font-extrabold text-white shadow-[0_12px_28px_rgba(217,93,57,.22)] transition hover:-translate-y-0.5 hover:bg-[#c94f2f]"><i data-lucide="route" class="h-5 w-5"></i>Calculate route</button>
+        <section class="grid grid-cols-2 gap-3"><div class="rounded-[24px] bg-charcoal p-5 text-white shadow-[0_15px_35px_rgba(30,30,30,.16)]"><div class="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-white/10"><i data-lucide="flame" class="h-5 w-5 text-orange-300"></i></div><p class="text-xs font-medium text-white/60">Calories to burn</p><p id="calories" class="mt-1 text-2xl font-extrabold">—</p></div><div class="rounded-[24px] bg-terracotta p-5 text-white shadow-[0_15px_35px_rgba(217,93,57,.22)]"><div class="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-white/15"><i data-lucide="footprints" class="h-5 w-5"></i></div><p class="text-xs font-medium text-white/75">Distance to <span id="activity-label">walk</span></p><p id="distance" class="mt-1 text-2xl font-extrabold">—</p></div></section>
+        <section class="grid grid-cols-2 gap-3"><div class="rounded-2xl bg-white p-4 shadow-sm"><p class="text-xs text-cocoa">Warehouse requests</p><p id="total-requests" class="mt-1 text-xl font-extrabold">—</p></div><div class="rounded-2xl bg-white p-4 shadow-sm"><p class="text-xs text-cocoa">Landmark inclusion</p><p id="landmark-rate" class="mt-1 text-xl font-extrabold">—</p></div></section>
+        <div id="status" class="px-1 text-xs text-cocoa">Connecting to PostgreSQL…</div>
+      </aside>
+    </section>
+    <footer class="flex flex-col justify-between gap-3 border-t border-charcoal/10 pt-5 text-xs text-cocoa sm:flex-row"><p>DeservEat · Deserve what you eat</p><p>Live read-only view of PostgreSQL/PostGIS. Distances and calories are estimates.</p></footer>
+  </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script><script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    let map, routeLine, startMarker, foodMarker, activity='walk', landmark='yes', landmarks=[];
+    const pin=(kind,icon)=>L.divIcon({className:'',html:`<div class="marker-pin marker-${kind}"><span>${icon}</span></div>`,iconSize:[38,38],iconAnchor:[19,34],popupAnchor:[0,-30]});
+    const landmarkPin=L.divIcon({className:'',html:'<div class="marker-pin marker-landmark"><span>◆</span></div>',iconSize:[30,30],iconAnchor:[15,15]});
+    function initMap(){map=L.map('map',{zoomControl:true}).setView([45.764,4.8357],13);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);}
+    function clearLandmarks(){landmarks.forEach(m=>m.remove());landmarks=[];}
+    function render(payload){
+      document.querySelector('#data-source').textContent=payload.source;
+      document.querySelector('#total-requests').textContent=Number(payload.summary.total_requests||0).toLocaleString();
+      document.querySelector('#landmark-rate').textContent=`${payload.summary.landmark_inclusion_pct||0}%`;
+      clearLandmarks();
+      payload.landmarks.forEach(item=>landmarks.push(L.marker([item.lat,item.lng],{icon:landmarkPin,opacity:.7}).addTo(map).bindPopup(`<strong>${item.name}</strong>`)));
+      const route=payload.route;
+      if(!route){if(routeLine)routeLine.remove();if(startMarker)startMarker.remove();if(foodMarker)foodMarker.remove();document.querySelector('#calories').textContent='No match';document.querySelector('#distance').textContent='—';document.querySelector('#status').textContent='No matching fact for this combination. Try another recipe or restaurant.';return;}
+      const points=route.landmark_lat?[ [route.start_lat,route.start_lng],[route.landmark_lat,route.landmark_lng],[route.end_lat,route.end_lng] ]:[[route.start_lat,route.start_lng],[route.end_lat,route.end_lng]];
+      if(routeLine)routeLine.remove();routeLine=L.polyline(points,{color:'#D95D39',weight:5,opacity:.9,dashArray:'7 11',className:'route-dash'}).addTo(map);
+      if(startMarker)startMarker.remove();if(foodMarker)foodMarker.remove();startMarker=L.marker(points[0],{icon:pin('start','●')}).addTo(map).bindPopup('<strong>Start point</strong><br>From dw.dim_itinerary');foodMarker=L.marker(points.at(-1),{icon:pin('food','♨')}).addTo(map).bindPopup(`<strong>${route.restaurant}</strong><br>${route.food}`);map.fitBounds(routeLine.getBounds(),{padding:[42,42],maxZoom:14,animate:true});
+      document.querySelector('#calories').innerHTML=`${route.calories} <span class="text-sm font-semibold text-white/60">kcal</span>`;document.querySelector('#distance').innerHTML=`${route.distance_km.toFixed(2)} <span class="text-sm font-semibold text-white/75">km</span>`;document.querySelector('#status').textContent=`${route.food} · ${route.restaurant} · ${route.activity_name}`;document.querySelector('#search-hint').textContent=`${route.food} · ${route.restaurant} · ${route.duration_min.toFixed(1)} min estimated`;
+    }
+    async function loadData(){const food=encodeURIComponent(document.querySelector('#food-search').value.trim());document.querySelector('#status').textContent='Querying PostgreSQL…';try{const response=await fetch(`/api/dashboard?food=${food}&activity=${activity}&landmark=${landmark}`);const payload=await response.json();if(!response.ok)throw new Error(payload.error);render(payload);}catch(error){document.querySelector('#status').textContent=`Database connection error: ${error.message}`;document.querySelector('#data-source').textContent='Offline';}}
+    let suggestionTimer;
+    async function suggestFoods(){const input=document.querySelector('#food-search'),box=document.querySelector('#suggestions'),query=input.value.trim();clearTimeout(suggestionTimer);suggestionTimer=setTimeout(async()=>{try{const response=await fetch(`/api/search?q=${encodeURIComponent(query)}`),payload=await response.json();if(!payload.results?.length){box.classList.add('hidden');return;}box.innerHTML=payload.results.map(item=>`<button data-food="${encodeURIComponent(item.food)}" class="block w-full rounded-xl px-3 py-2 text-left text-sm font-semibold hover:bg-cream"><span>${item.food}</span><span class="float-right text-xs font-normal text-cocoa">${item.calories} kcal · ${item.requests} facts</span></button>`).join('');box.classList.remove('hidden');box.querySelectorAll('[data-food]').forEach(button=>button.addEventListener('click',()=>{input.value=decodeURIComponent(button.dataset.food);box.classList.add('hidden');loadData();}));}catch(error){box.classList.add('hidden');}},180);}
+    document.addEventListener('DOMContentLoaded',()=>{lucide.createIcons();initMap();loadData();const input=document.querySelector('#food-search');input.addEventListener('input',suggestFoods);input.addEventListener('focus',suggestFoods);input.addEventListener('keydown',event=>{if(event.key==='Enter'){document.querySelector('#suggestions').classList.add('hidden');loadData();}});document.addEventListener('click',event=>{if(!event.target.closest('#food-search')&&!event.target.closest('#suggestions'))document.querySelector('#suggestions').classList.add('hidden');});document.querySelector('#locate-btn').addEventListener('click',()=>{if(startMarker)map.flyTo(startMarker.getLatLng(),15,{duration:.8});});document.querySelectorAll('[data-activity]').forEach(button=>button.addEventListener('click',()=>{activity=button.dataset.activity;document.querySelectorAll('[data-activity]').forEach(item=>item.classList.toggle('active',item===button));document.querySelector('#activity-label').textContent=activity;loadData();}));document.querySelectorAll('[data-landmark]').forEach(button=>button.addEventListener('click',()=>{landmark=button.dataset.landmark;document.querySelectorAll('[data-landmark]').forEach(item=>item.classList.toggle('active',item===button));loadData();}));});
+  </script>
+  <script>
+    // Planner layer: recipe + optional restaurant + start point + landmark, all resolved by PostgreSQL.
+    let startMode = 'restaurant', currentLat = null, currentLng = null, restaurantTimer;
+    function plannerParams() {
+      const params = new URLSearchParams({
+        recipe: document.querySelector('#food-search').value.trim(),
+        restaurant: document.querySelector('#restaurant-search').value.trim(),
+        activity, landmark, start_mode: startMode
+      });
+      if (startMode === 'current' && currentLat !== null) { params.set('start_lat', currentLat); params.set('start_lng', currentLng); }
+      return params;
+    }
+    function renderCalculatedRoute(route) {
+      const points = route.points.map(point => [point.lat, point.lng]);
+      if (routeLine) routeLine.remove();
+      routeLine = L.polyline(points, {color:'#D95D39', weight:5, opacity:.9, dashArray:'7 11', className:'route-dash'}).addTo(map);
+      if (startMarker) startMarker.remove();
+      if (foodMarker) foodMarker.remove();
+      startMarker = L.marker(points[0], {icon:pin('start','●')}).addTo(map).bindPopup('<strong>Starting point</strong>');
+      foodMarker = L.marker(points[1], {icon:pin('food','♨')}).addTo(map).bindPopup(`<strong>${route.restaurant}</strong><br>${route.recipe}`);
+      map.fitBounds(routeLine.getBounds(), {padding:[42,42], maxZoom:14, animate:true});
+      document.querySelector('#calories').innerHTML = `${route.calories} <span class="text-sm font-semibold text-white/60">kcal</span>`;
+      document.querySelector('#distance').innerHTML = `${route.target_distance_km.toFixed(2)} <span class="text-sm font-semibold text-white/75">km</span>`;
+      document.querySelector('#activity-label').textContent = activity;
+      document.querySelector('#search-hint').textContent = `${route.recipe} · ${route.restaurant} · ${route.duration_min.toFixed(1)} min · ${route.weight_kg.toFixed(1)} kg reference`;
+      document.querySelector('#status').textContent = `${route.activity_name} · route geometry ${route.route_distance_km.toFixed(2)} km${route.landmark ? ` · via ${route.landmark.name}` : ''}`;
+    }
+    async function calculateRoute() {
+      const recipe = document.querySelector('#food-search').value.trim();
+      if (!recipe) { document.querySelector('#status').textContent = 'Choose a recipe from the suggestions first.'; return; }
+      if (startMode === 'current' && currentLat === null) { requestLocation(calculateRoute); return; }
+      const button = document.querySelector('#calculate-btn'); button.disabled = true; button.textContent = 'Calculating…';
+      try {
+        const response = await fetch(`/api/route?${plannerParams()}`), payload = await response.json();
+        if (!response.ok) throw new Error(payload.error);
+        renderCalculatedRoute(payload);
+      } catch (error) { document.querySelector('#status').textContent = `No route found: ${error.message}`; }
+      finally { button.disabled = false; button.innerHTML = '<i data-lucide="route" class="h-5 w-5"></i>Calculate route'; lucide.createIcons(); }
+    }
+    function requestLocation(after) {
+      if (!navigator.geolocation) { document.querySelector('#location-status').textContent = 'Geolocation is not supported by this browser.'; return; }
+      document.querySelector('#location-status').textContent = 'Requesting your browser location…';
+      navigator.geolocation.getCurrentPosition(position => { currentLat = position.coords.latitude; currentLng = position.coords.longitude; document.querySelector('#location-status').textContent = `Starting at ${currentLat.toFixed(4)}, ${currentLng.toFixed(4)}`; if (after) after(); }, error => { document.querySelector('#location-status').textContent = `Location unavailable: ${error.message}`; });
+    }
+    async function suggestRestaurants() {
+      const input = document.querySelector('#restaurant-search'), box = document.querySelector('#restaurant-suggestions'), query = input.value.trim();
+      clearTimeout(restaurantTimer); restaurantTimer = setTimeout(async () => { try { const response = await fetch(`/api/search?kind=restaurant&q=${encodeURIComponent(query)}`), payload = await response.json(); if (!payload.results?.length) { box.classList.add('hidden'); return; } box.innerHTML = payload.results.map(item => `<button data-restaurant="${encodeURIComponent(item.name)}" class="block w-full rounded-xl px-3 py-2 text-left text-sm font-semibold hover:bg-cream"><span>${item.name}</span><span class="float-right text-xs font-normal text-cocoa">${item.requests} facts</span></button>`).join(''); box.classList.remove('hidden'); box.querySelectorAll('[data-restaurant]').forEach(button => button.addEventListener('click', () => { input.value = decodeURIComponent(button.dataset.restaurant); box.classList.add('hidden'); })); } catch (_) { box.classList.add('hidden'); } }, 180);
+    }
+    // Keep the initial KPI load, but route calculations happen only after the user clicks Calculate.
+    window.loadData = async function () { try { const response = await fetch('/api/dashboard?food=&activity=walk&landmark=yes'), payload = await response.json(); document.querySelector('#data-source').textContent = payload.source; document.querySelector('#total-requests').textContent = Number(payload.summary.total_requests || 0).toLocaleString(); document.querySelector('#landmark-rate').textContent = `${payload.summary.landmark_inclusion_pct || 0}%`; document.querySelector('#status').textContent = 'Select a recipe, then calculate your route.'; } catch (error) { document.querySelector('#status').textContent = `Database connection error: ${error.message}`; } };
+    document.addEventListener('DOMContentLoaded', () => {
+      const restaurantInput = document.querySelector('#restaurant-search');
+      restaurantInput.addEventListener('input', suggestRestaurants); restaurantInput.addEventListener('focus', suggestRestaurants);
+      document.querySelector('#calculate-btn').addEventListener('click', calculateRoute);
+      document.querySelectorAll('[data-start]').forEach(button => button.addEventListener('click', () => { startMode = button.dataset.start; document.querySelectorAll('[data-start]').forEach(item => item.classList.toggle('active', item === button)); if (startMode === 'current') requestLocation(); else document.querySelector('#location-status').textContent = 'The selected restaurant will be the start point.'; }));
+      document.addEventListener('click', event => { if (!event.target.closest('#restaurant-search') && !event.target.closest('#restaurant-suggestions')) document.querySelector('#restaurant-suggestions').classList.add('hidden'); });
+    });
+  </script>
+</body>
+</html>

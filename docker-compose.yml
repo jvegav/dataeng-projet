@@ -108,6 +108,17 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
 
+  dashboard:
+    <<: *airflow-common
+    command: python /opt/airflow/dashboard/app.py
+    ports:
+      - "${DASHBOARD_PORT:-8000}:8000"
+    volumes:
+      - ./dashboard:/opt/airflow/dashboard:ro
+    depends_on:
+      <<: *airflow-depends
+    restart: unless-stopped
+
 volumes:
   pgdata:
   airflow-logs:
