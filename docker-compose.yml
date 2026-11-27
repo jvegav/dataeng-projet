@@ -22,6 +22,8 @@ x-airflow-common: &airflow-common
     AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY}
     # Connection used by the DAGs (conn_id "deserveat_dw")
     AIRFLOW_CONN_DESERVEAT_DW: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    # Same database for the command-line loaders (src/loading, src/generation)
+    DW_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
     # Read by scripts_data_prep/config.py: SAMPLE=true -> data/sample/ (offline sample)
     DATA_DIR: /opt/airflow/data
     SAMPLE: ${SAMPLE:-true}

@@ -136,7 +136,22 @@ python src/loading/load_warehouse.py               # data/processed/ (SAMPLE=tru
 python src/loading/load_warehouse.py               # second run: 0 inserted, 0 updated
 ```
 
-Database tests (constraints, loading, SCD2) create and drop their own database `deserveat_test`:
+### Generating synthetic users and requests
+
+`src/generation/generate_requests.py` fills `dim_user` (SCD2 history through `dw.apply_user_version`), `dim_itinerary` and `fact_calorie_burn` from the loaded dimensions:
+
+- 50 users `g<seed>-0001`…; about 30 % change weight once or twice (new SCD2 versions).
+- 0 to 6 requests per day between 08:00 and 23:00 (Lyon time): random user, recipe, restaurant and activity.
+- About 30 % start from the user's position (drawn within 1.5 km of the restaurant, stored rounded to ~200 m), the others from the restaurant; about 40 % ask for one of the 5 landmarks nearest to the restaurant.
+- A landmark or user start is kept only if the straight-line legs (start → restaurant → landmark, or the loop back) fit in `distance_km`.
+- Same seed and same dimensions give the same rows, whether a period is generated at once or day by day; a second run adds nothing.
+
+```bash
+python src/generation/generate_requests.py                                      # 2026, seed 42 (about 1 100 requests)
+python src/generation/generate_requests.py --start 2026-11-27 --end 2026-11-27  # one day (daily batch)
+```
+
+Database tests (constraints, loading, SCD2, calculations, generation) create and drop their own database `deserveat_test`:
 
 ```bash
 export TEST_DATABASE_URL=postgresql://deserveat:<password>@localhost:5432/postgres
@@ -417,6 +432,7 @@ ORDER BY a.activity_name, avg_distance_km DESC;
 
 - Distances are straight-line (PostGIS `ST_Distance`), not road-network routes. Chained landmarks are future work; long targets require several round trips.
 - Each itinerary assumes **one serving** of the recipe (`kcal_to_burn = kcal_per_serving`).
+- Duration and distance: `duration_min = 60 × kcal_to_burn / (met_value × weight_kg)` (an activity burns about MET × kg kcal per hour) and `distance_km = speed_kmh × duration_min / 60`, with the user's weight valid at `requested_at` (SCD2). Example: 520 kcal of lasagna, moderate run (MET 9.3, 9.90 km/h), 70 kg → 60 × 520 / (9.3 × 70) = **47.9 min** and 9.90 × 47.9 / 60 ≈ **7.91 km**; the same dish after the user's weight dropped to 66 kg, as a fast run (MET 12, 12.87 km/h) → **39.4 min**, **8.45 km**. These cases are checked in `tests/database/test_calculations.py`.
 - The route goes from the start point (restaurant or rounded user position) to the restaurant if needed, then to the landmark; without a landmark it is a loop back to the start point.
 - `distance_km` is the **total** distance to cover to burn the calories (`speed_kmh × duration_min / 60`), not the distance between `start_point` and `end_point`; it is always at least the straight-line start–end distance. `route_steps` stays NULL until road-network routing is added.
 - Calorie expenditure is estimated from MET, user weight and duration; it is not a physiological measurement.

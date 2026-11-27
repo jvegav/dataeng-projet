@@ -220,13 +220,13 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @Marti820 · **Labels :** `Marti820-database` · **Milestone :** M2 · **Branche :** `feature/issue-11-business-calculations` · **Dépend de :** #9
 
 **À faire**
-- [ ] `duration_min = 60 × kcal_to_burn / (MET × weight_kg)`
-- [ ] `distance_km = speed_kmh × duration_min / 60`
-- [ ] Vérifier `kcal_to_burn > 0`, `duration_min > 0`, `distance_km >= 0`, FK valides
-- [ ] Documenter les formules et l'hypothèse « une portion » dans le README
+- [x] `duration_min = 60 × kcal_to_burn / (MET × weight_kg)`
+- [x] `distance_km = speed_kmh × duration_min / 60`
+- [x] Vérifier `kcal_to_burn > 0`, `duration_min > 0`, `distance_km >= 0`, FK valides
+- [x] Documenter les formules et l'hypothèse « une portion » dans le README
 
 **Critères d'acceptation**
-- [ ] Tests sur au moins 3 cas calculés à la main
+- [x] Tests sur au moins 3 cas calculés à la main
 
 ---
 
@@ -257,8 +257,8 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 - [x] Vérification de santé (healthcheck) de PostgreSQL
 
 **Critères d'acceptation**
-- [ ] `docker compose up` depuis un clone propre démarre la base et Airflow
-- [ ] Les données survivent à un redémarrage (volumes)
+- [x] `docker compose up` depuis un clone propre démarre la base et Airflow
+- [x] Les données survivent à un redémarrage (volumes)
 
 ---
 
@@ -266,13 +266,13 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @Marti820 · **Labels :** `Marti820-database` · **Milestone :** M3 · **Branche :** `feature/issue-22-synthetic-data` · **Dépend de :** #8, #9, #11
 
 **À faire** (`src/generation/`)
-- [ ] Générer des utilisateurs avec quelques changements de poids (SCD2)
-- [ ] Générer des demandes : choix de recette, restaurant, activité, monument optionnel, horodatage
-- [ ] Construire `dim_itinerary` et `fact_calorie_burn` avec les bonnes clés (version utilisateur valide à `requested_at`)
-- [ ] Graine fixe (reproductible) et volume paramétrable
+- [x] Générer des utilisateurs avec quelques changements de poids (SCD2)
+- [x] Générer des demandes : choix de recette, restaurant, activité, monument optionnel, horodatage
+- [x] Construire `dim_itinerary` et `fact_calorie_burn` avec les bonnes clés (version utilisateur valide à `requested_at`)
+- [x] Graine fixe (reproductible) et volume paramétrable
 
 **Critères d'acceptation**
-- [ ] Deux exécutions avec la même graine donnent les mêmes lignes, sans doublon
+- [x] Deux exécutions avec la même graine donnent les mêmes lignes, sans doublon
 
 ---
 
