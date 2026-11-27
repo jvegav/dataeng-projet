@@ -21,3 +21,7 @@ data/sample_run/
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Docker: real passwords stay local (.env.example is the template)
+.env
+logs/

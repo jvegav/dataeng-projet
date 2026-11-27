@@ -1,0 +1,111 @@
+# DeservEat - local environment: PostgreSQL/PostGIS (warehouse + Airflow metadata) and Airflow 2.
+#
+#   cp .env.example .env        # then change the passwords
+#   docker compose up -d --build
+#
+#   Airflow UI:  http://localhost:8080   (user/password from .env)
+#   Warehouse:   localhost:5432, database $POSTGRES_DB (schemas landing, staging, dw)
+#
+# On the first start (empty volume) Postgres creates the Airflow metadata database and runs
+# files/01_ddl.sql. Data survives `docker compose down` / restarts (named volume pgdata);
+# `docker compose down -v` deletes it and the next start rebuilds an empty warehouse.
+
+x-airflow-common: &airflow-common
+  build: ./docker/airflow
+  image: deserveat-airflow:2.10.5
+  env_file: .env
+  environment: &airflow-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${AIRFLOW_DB_USER}:${AIRFLOW_DB_PASSWORD}@postgres:5432/${AIRFLOW_DB_NAME}
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
+    AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY}
+    # Connection used by the DAGs (conn_id "deserveat_dw")
+    AIRFLOW_CONN_DESERVEAT_DW: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    # Read by scripts_data_prep/config.py: SAMPLE=true -> data/sample/ (offline sample)
+    DATA_DIR: /opt/airflow/data
+    SAMPLE: ${SAMPLE:-true}
+    PYTHONPATH: /opt/airflow/scripts_data_prep
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./scripts_data_prep:/opt/airflow/scripts_data_prep
+    - ./data:/opt/airflow/data
+    - ./files:/opt/airflow/files
+    - ./sql:/opt/airflow/sql
+    - ./src:/opt/airflow/src
+    - ./tests:/opt/airflow/tests
+    - airflow-logs:/opt/airflow/logs
+  user: "${AIRFLOW_UID:-50000}:0"
+  depends_on: &airflow-depends
+    postgres:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Run once, in this order, when the volume is empty
+      - ./docker/postgres/00_create_airflow_db.sh:/docker-entrypoint-initdb.d/00_create_airflow_db.sh:ro
+      - ./files/01_ddl.sql:/docker-entrypoint-initdb.d/10_ddl.sql:ro
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  airflow-init:
+    <<: *airflow-common
+    command:
+      - bash
+      - -c
+      - |
+        airflow db migrate &&
+        (airflow users list | grep -qw "${AIRFLOW_ADMIN_USER}" ||
+         airflow users create --role Admin --username "${AIRFLOW_ADMIN_USER}" --password "${AIRFLOW_ADMIN_PASSWORD}" --firstname Admin --lastname DeservEat --email admin@deserveat.local)
+    restart: "no"
+
+  airflow-webserver:
+    <<: *airflow-common
+    command: webserver
+    ports:
+      - "${AIRFLOW_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      <<: *airflow-depends
+      airflow-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8974/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    environment:
+      <<: *airflow-env
+      AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: "true"
+    depends_on:
+      <<: *airflow-depends
+      airflow-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  airflow-logs:

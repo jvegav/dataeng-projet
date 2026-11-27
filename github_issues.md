@@ -155,16 +155,16 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @Marti820 · **Labels :** `Marti820-database`, `blocker` · **Milestone :** M1 · **Branche :** `feature/issue-07-new-ddl` · **Dépend de :** #24
 
 **À faire** (`files/01_ddl.sql`)
-- [ ] Supprimer `fact_itinerary`
-- [ ] Créer `dim_user`, `dim_recipe`, `dim_restaurant`, `dim_landmark`, `dim_activity`, `dim_date`, `dim_itinerary`, `fact_calorie_burn`
-- [ ] Ordre : dimensions → `dim_itinerary` → fait
-- [ ] Fait : `calorie_burn_key`, `user_key`, `recipe_key`, `restaurant_key`, `activity_key`, `landmark_key` (nullable : NULL = sans monument), `itinerary_key`, `date_key`, `kcal_to_burn`, `duration_min`, `distance_km`, `requested_at`
-- [ ] Créer les schémas `landing`, `staging`, `dw` et `staging.rejected_rows`
-- [ ] Qualifier les tables ou documenter le `search_path`
+- [x] Supprimer `fact_itinerary`
+- [x] Créer `dim_user`, `dim_recipe`, `dim_restaurant`, `dim_landmark`, `dim_activity`, `dim_date`, `dim_itinerary`, `fact_calorie_burn`
+- [x] Ordre : dimensions → `dim_itinerary` → fait
+- [x] Fait : `calorie_burn_key`, `user_key`, `recipe_key`, `restaurant_key`, `activity_key`, `landmark_key` (nullable : NULL = sans monument), `itinerary_key`, `date_key`, `kcal_to_burn`, `duration_min`, `distance_km`, `requested_at`
+- [x] Créer les schémas `landing`, `staging`, `dw` et `staging.rejected_rows`
+- [x] Qualifier les tables ou documenter le `search_path`
 
 **Critères d'acceptation**
-- [ ] Le DDL s'exécute sur une base vide sans erreur
-- [ ] Aucune référence à `fact_itinerary`
+- [x] Le DDL s'exécute sur une base vide sans erreur
+- [x] Aucune référence à `fact_itinerary`
 
 ---
 
@@ -172,14 +172,14 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @Marti820 · **Labels :** `Marti820-database` · **Milestone :** M1 · **Branche :** `feature/issue-08-dim-itinerary` · **Dépend de :** #24
 
 **À faire**
-- [ ] Colonnes `itinerary_key`, `start_type`, `start_point`, `end_point`, `route_steps`
-- [ ] `CHECK (start_type IN ('user_location','restaurant'))`
-- [ ] Points en `GEOGRAPHY(Point,4326)`, `route_steps JSONB` (NULL ou tableau)
-- [ ] Arrondi de `start_point` à ~200 m pour les positions utilisateur (documenter la méthode)
-- [ ] Documenter les décisions prises en #24 : relation 1:1 ou 1:N avec le fait, rôle du restaurant, sens de `distance_km`
+- [x] Colonnes `itinerary_key`, `start_type`, `start_point`, `end_point`, `route_steps`
+- [x] `CHECK (start_type IN ('user_location','restaurant'))`
+- [x] Points en `GEOGRAPHY(Point,4326)`, `route_steps JSONB` (NULL ou tableau)
+- [x] Arrondi de `start_point` à ~200 m pour les positions utilisateur (documenter la méthode)
+- [x] Documenter les décisions prises en #24 : relation 1:1 ou 1:N avec le fait, rôle du restaurant, sens de `distance_km`
 
 **Critères d'acceptation**
-- [ ] Contraintes testées (une valeur invalide de `start_type` est rejetée)
+- [x] Contraintes testées (une valeur invalide de `start_type` est rejetée)
 
 ---
 
@@ -187,17 +187,17 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @Marti820 · **Labels :** `Marti820-database` · **Milestone :** M2 · **Branche :** `feature/issue-09-scd-dimensions` · **Dépend de :** #7
 
 **À faire**
-- [ ] SCD1 : `dim_recipe`, `dim_restaurant`, `dim_landmark` (upsert sur `source_id`)
-- [ ] Statiques : `dim_activity`, `dim_date`
-- [ ] SCD2 : `dim_user` avec `valid_from`, `valid_to`, `is_current`
-- [ ] Contrainte d'exclusion contre les chevauchements (`btree_gist`, `tstzrange`)
-- [ ] Cohérence `is_current` = (`valid_to` = `9999-12-31`)
-- [ ] Fonction ou requête de recherche de la version utilisateur valide à `requested_at`
-- [ ] Pas de ligne `-1` dans `dim_landmark` : un fait sans monument a `landmark_key` NULL
+- [x] SCD1 : `dim_recipe`, `dim_restaurant`, `dim_landmark` (upsert sur `source_id`)
+- [x] Statiques : `dim_activity`, `dim_date`
+- [x] SCD2 : `dim_user` avec `valid_from`, `valid_to`, `is_current`
+- [x] Contrainte d'exclusion contre les chevauchements (`btree_gist`, `tstzrange`)
+- [x] Cohérence `is_current` = (`valid_to` = `9999-12-31`)
+- [x] Fonction ou requête de recherche de la version utilisateur valide à `requested_at`
+- [x] Pas de ligne `-1` dans `dim_landmark` : un fait sans monument a `landmark_key` NULL
 
 **Critères d'acceptation**
-- [ ] Au plus une version courante par utilisateur, aucun chevauchement
-- [ ] Une mise à jour SCD1 n'ajoute pas de ligne
+- [x] Au plus une version courante par utilisateur, aucun chevauchement
+- [x] Une mise à jour SCD1 n'ajoute pas de ligne
 
 ---
 
@@ -205,14 +205,14 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @Marti820 · **Labels :** `Marti820-database` · **Milestone :** M1 · **Branche :** `feature/issue-10-sample-data` · **Dépend de :** #7, #8
 
 **À faire** (`files/02_sample_data.sql`)
-- [ ] Supprimer les insertions dans `fact_itinerary`
-- [ ] Insérer d'abord `dim_itinerary` (clés explicites), puis `fact_calorie_burn`
-- [ ] Conserver utilisateurs synthétiques, recettes, restaurants et monuments d'exemple
-- [ ] `landmark_key` NULL pour les demandes sans monument
-- [ ] `dim_date` couvrant toutes les dates du sample
+- [x] Supprimer les insertions dans `fact_itinerary`
+- [x] Insérer d'abord `dim_itinerary` (clés explicites), puis `fact_calorie_burn`
+- [x] Conserver utilisateurs synthétiques, recettes, restaurants et monuments d'exemple
+- [x] `landmark_key` NULL pour les demandes sans monument
+- [x] `dim_date` couvrant toutes les dates du sample
 
 **Critères d'acceptation**
-- [ ] Le DDL puis le sample s'exécutent sans erreur et toutes les FK sont valides
+- [x] Le DDL puis le sample s'exécutent sans erreur et toutes les FK sont valides
 
 ---
 
@@ -234,15 +234,15 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @Marti820 · **Labels :** `Marti820-database` · **Milestone :** M2 · **Branche :** `feature/issue-12-constraints-indexes` · **Dépend de :** #7
 
 **À faire**
-- [ ] PK, FK, `CHECK`
-- [ ] Index sur toutes les FK, sur `requested_at` et `date_key`
-- [ ] Index GiST sur les colonnes `geography` (dimensions et `dim_itinerary`)
-- [ ] `CHECK` sur `insee_code` : les 58 codes de la Métropole de Lyon (liste de `processing_landmarks.py`)
-- [ ] Aligner les `CHECK` de bounding box avec les scripts (lat 45.4–46.1, lon 4.5–5.3)
-- [ ] Clé d'unicité d'idempotence sur le fait (par exemple `user_key`, `recipe_key`, `restaurant_key`, `activity_key`, `requested_at`)
+- [x] PK, FK, `CHECK`
+- [x] Index sur toutes les FK, sur `requested_at` et `date_key`
+- [x] Index GiST sur les colonnes `geography` (dimensions et `dim_itinerary`)
+- [x] `CHECK` sur `insee_code` : les 58 codes de la Métropole de Lyon (liste de `processing_landmarks.py`)
+- [x] Aligner les `CHECK` de bounding box avec les scripts (lat 45.4–46.1, lon 4.5–5.3)
+- [x] Clé d'unicité d'idempotence sur le fait (par exemple `user_key`, `recipe_key`, `restaurant_key`, `activity_key`, `requested_at`)
 
 **Critères d'acceptation**
-- [ ] Insérer deux fois la même demande échoue ou est ignoré (`ON CONFLICT DO NOTHING`)
+- [x] Insérer deux fois la même demande échoue ou est ignoré (`ON CONFLICT DO NOTHING`)
 
 ---
 
@@ -250,11 +250,11 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @Marti820 · **Labels :** `Marti820-database`, `blocker` · **Milestone :** M1 · **Branche :** `feature/issue-21-docker`
 
 **À faire**
-- [ ] `docker-compose.yml` : PostGIS, Airflow (webserver, scheduler), volumes persistants
-- [ ] `.env.example` (aucun mot de passe réel dans le dépôt)
-- [ ] Exécution automatique du DDL au premier démarrage
-- [ ] Commande de lancement unique documentée dans le README
-- [ ] Vérification de santé (healthcheck) de PostgreSQL
+- [x] `docker-compose.yml` : PostGIS, Airflow (webserver, scheduler), volumes persistants
+- [x] `.env.example` (aucun mot de passe réel dans le dépôt)
+- [x] Exécution automatique du DDL au premier démarrage
+- [x] Commande de lancement unique documentée dans le README
+- [x] Vérification de santé (healthcheck) de PostgreSQL
 
 **Critères d'acceptation**
 - [ ] `docker compose up` depuis un clone propre démarre la base et Airflow
@@ -390,16 +390,18 @@ Les quatre sources doivent être disponibles et documentées avant toute ingesti
 **Assigné :** @Marti820 (pilote), @kaguir, @jvegav · **Labels :** `commun`, `blocker`, `docs` · **Milestone :** M1 · **Branche :** `feature/issue-24-model-alignment`
 
 **À décider et consigner**
-- [ ] Grain de `fact_calorie_burn`
-- [ ] Rôle de `dim_itinerary` : relation 1:1 ou 1:N avec le fait
-- [ ] Rôle du restaurant quand `start_type = user_location`
-- [ ] Sens de `distance_km` (aller simple ou aller-retour)
-- [ ] Sort de `route_steps` (rempli ou NULL)
+- [x] Grain de `fact_calorie_burn`
+- [x] Rôle de `dim_itinerary` : relation 1:1 ou 1:N avec le fait
+- [x] Rôle du restaurant quand `start_type = user_location`
+- [x] Sens de `distance_km` (aller simple ou aller-retour)
+- [x] Sort de `route_steps` (rempli ou NULL)
+
+**Décisions (25/11/2026)** : grain inchangé (un plat à brûler par utilisateur, moment, restaurant, activité, itinéraire, 0..1 monument) ; `dim_itinerary` 1:1 avec le fait (`UNIQUE (itinerary_key)`) ; départ `restaurant` ou `user_location` (position arrondie à ~200 m, trajet départ → restaurant → monument, ou boucle vers le départ) ; `distance_km` = distance totale à parcourir (≥ distance en ligne droite départ–arrivée) ; `route_steps` conservé, toujours NULL.
 
 **À faire**
 - [ ] Refaire `star_schema.jpeg` (fait renommé, `dim_itinerary`, 7 dimensions, `itinerary_key`)
 - [ ] Refaire `architecture_diagram.jpeg` (retirer `fact_itinerary`, restaurants obligatoires, retirer « chained landmarks » ou le marquer hors périmètre)
-- [ ] Corriger le README (sections 5 et 9)
+- [x] Corriger le README (sections 5 et 9)
 
 **Critères d'acceptation**
 - [ ] README, DDL et diagrammes décrivent le même modèle
